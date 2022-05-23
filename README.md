@@ -23,7 +23,7 @@ dockerでphpのコンテナを作成し、そのコンテナ内で、動くリ�
 
 ```
 docker pull php
-docker run -v /reversi:/reversi --name reversi-app php /bin/bash
+docker run -d -it --name reversi-app -v /reversi:/app php /bin/bash
 docker start reversi-app
 docker exec -it reversi-app /bin/bash
 ```
