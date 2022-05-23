@@ -24,6 +24,7 @@ dockerでphpのコンテナを作成し、そのコンテナ内で、動くリ�
 ```
 docker pull php
 docker run -v /lib/reversi:/lib/reversi --name reversi-app php
+docker start reversi-app
 docker exec -it reversi-app /bin/bash
 ```
 
