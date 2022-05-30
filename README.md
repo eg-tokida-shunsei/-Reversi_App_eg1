@@ -23,9 +23,12 @@ dockerでphpのコンテナを作成し、そのコンテナ内で、動くリ�
 
 ```
 docker pull php
-docker run -d -it --name reversi-app -v /reversi:/app php
+docker run -d -it --name reversi-app -v C:/Users/S.Okawa/reversi:/app php
 docker start reversi-app
 docker exec -it reversi-app /bin/bash
+
+#適当なコンテナを作って、volumeをし、phpを起動する
+docker run -w /app -it -v C:/Users/S.Okawa/reversi:/app php php reversi.php
 ```
 
 # 日数、リバーシのルール
