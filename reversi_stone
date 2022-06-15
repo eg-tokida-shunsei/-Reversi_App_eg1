@@ -1,0 +1,61 @@
+<?php
+
+$field = array_fill(1, 64, 0);
+
+$field[28] = $field[37] = 1;
+$field[29] = $field[36] = -1;
+
+#実験用
+$field[34] = $field[35] = -1;
+#print_r($field);
+$push = 33;
+#$push
+$player = 1;
+$number = 0;
+$X = 1;
+print($field[$number + 1 * $X]);
+echo gettype($field[$number + 1 * $X]);
+echo gettype($X);
+echo gettype($player);
+
+#$check = [];
+#24行目が型の違いで怒られるけど、上記の方法で調べると、全部int型なんだけどな……
+for ($X = 1; $X < 8; $X++) {
+  if ($number === 1 || $number === 2 || $number === 3 || $number === 4 || $number === 5 || $number === 6 || $number === 7 || $number === 8 || $number === 57 || $number === 58 || $number === 59 || $number === 61 || $number === 62 || $number === 63 || $number === 64 || $number === 9 || $number === 17 || $number === 25 || $number === 33 || $number === 41 || $number === 49 || $number === 16 || $number === 24 || $number === 32 || $number === 40 || $number === 48 || $number === 56 || $field[$number + 1 * $X] === $player) {
+    if ($X === 7) {
+      if ($field[$number + 1 * $X] + $player === 0) {
+        $field[$number + 1 * $X] = $player;
+      }
+    } else {
+      $X = 8;
+    }
+    #print($number);
+    #print($push);
+  } else {
+    $number = $push;
+    #$check = $field[$number + 1 * $X];
+    print_r($field[$number + 1 * $X]);
+    if ($field[$number + 1 * $X] + $player === 0) {
+      $field[$number + 1 * $X] = $player;
+      $number = [$number + 1 * $X];
+    }
+  }
+
+  #echo $field[$number + 1 * $X]+$player;
+
+}
+$field[$push] = $player;
+#echo $field[33];
+#echo $field[34];
+#echo $field[35];
+#echo $field[36];
+#echo $field[37];
+#echo $field[38];
+#echo $field[39];
+#echo $field[40];
+
+#わかりきってる課題：1が出なかったときの処理はしないといけない。→置いた石の列の端が同じ石でなければならない。
+#26行目と38行目の石を変える処理、変えられる石なかった時に止める処理しないと。
+
+#整理、現状1が出た時に止める処理はしている。つまり、1が出ない状況は、端まで1を探しに行った状態。つまり処理が終わった後に、1がなかったらひっくり返るのをやめる処理をすればよい。
+#あーそうか！！本当は面倒くさがらずに一回一回チェック入れた方が確実なのか……

@@ -23,3 +23,34 @@ for ($y = 0; $y < 8; $y++) { for ($x=0; $x < 8; $x++) { $field[$x][$y]=0; } } #e
   return false;
   }
   return true
+
+
+
+  
+  $player_W = 1;
+$player_B = -1;
+
+for ($turn=1 ; $turn<40 ; $turn++){
+  if($turn % 2 == 1){
+    $player = $player_W;
+  }
+  else{
+    $player = $player_B;
+  }
+  print($player);
+}
+
+$i = 1;
+while ($i <= 10) {
+    echo $i++;  /* 出力される値は、足される前の
+                    $iの値です。
+                    (後置加算) */
+}
+
+$a = 5;
+$b = 100;
+if($a === 1 || $a === 2 || $a === 3){
+  echo $a;
+}else{
+  echo $b;
+}
