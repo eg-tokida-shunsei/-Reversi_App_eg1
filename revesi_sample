@@ -1,3 +1,139 @@
 <?php
 
-#関数用
+#関数作成用 ひっくり返せる石をひっくり返す　
+
+$field = array_fill(1, 64, 0);
+$field[28] = $field[37] = 1;
+$field[29] = $field[36] = -1;
+
+
+$push = 9;
+#$push
+$player = 1;
+$number = 0;
+
+
+
+
+function reversi_stone($field, $number, $player, $push, $octas)
+{
+  $field_log = $field;
+  for ($X = 1; $X < 8; $X++) {
+
+    if (
+      $number === 1 || $number === 2 || $number === 3 || $number === 4 || $number === 5 || $number === 6 || $number === 7 || $number === 8 || $number === 57 || $number === 58
+      || $number === 59 || $number === 61 || $number === 62 || $number === 63 || $number === 64 || $number === 9 || $number === 17 || $number === 25 || $number === 33 || $number === 41
+      || $number === 49 || $number === 16 || $number === 24 || $number === 32 || $number === 40 || $number === 48 || $number === 56
+    ) {
+      if ($X === 7) {
+        if ($field[$number] + $player === 0) {
+          $field[$number] = $player;
+          $number_array[] = $number;
+
+          foreach ($number_array as $value) {
+            $field[$value] = $field_log[$value];
+          }
+          $X = 8;
+        } else {
+          if ($field[$number] === $player) {
+            $field[$push] = $player;
+            $X = 8;
+          } else {
+            $number_array[] = $number;
+            foreach ($number_array as $value) {
+              $field[$value] = $field_log[$value];
+            }
+            $X = 8;
+          }
+        }
+      } else {
+        if ($field[$number] === $player) {
+          $field[$push] = $player;
+          $X = 8;
+        } else {
+          $number_array[] = $number;
+          print_r($number_array);
+          foreach ($number_array as $value) {
+            $field[$value] = $field_log[$value];
+          }
+          $X = 8;
+        }
+      }
+      #print($number);
+      #print($push);
+    } else {
+      if ($X === 1) {
+        $number = $push + $octas;
+        if (
+          $number === -8 || $number === -7 || $number === -6
+          || $number === -5 || $number === -4 || $number === -3 || $number === -2 || $number === -1 || $number === 0 || $number === 65 || $number === 66 || $number === 67 || $number === 68
+          || $number === 69 || $number === 70 || $number === 71 || $number === 73
+        ) {
+          $X = 8;
+        } else {
+          if ($field[$number] + $player === 0) {
+            $field[$number] = $player;
+            $number_array = [$number];
+            print_r($number_array);
+            $number = $number + $octas;
+            if (
+              $number === -8 || $number === -7 || $number === -6
+              || $number === -5 || $number === -4 || $number === -3 || $number === -2 || $number === -1 || $number === 0 || $number === 65 || $number === 66 || $number === 67 || $number === 68
+              || $number === 69 || $number === 70 || $number === 71 || $number === 73
+            ) {
+              $X = 8;
+            }
+          } else {
+            if ($field[$number] === $player) {
+              $field[$push] = $player;
+              $X = 8;
+            } else {
+              $number_array[] = $number;
+              foreach ($number_array as $value) {
+                $field[$value] = $field_log[$value];
+              }
+              $X = 8;
+            }
+          }
+        }
+      } else {
+
+        #echo '$number:'.gettype($number) . "\n";
+        #$check = $field[$number + 1 * $X];
+        #print_r($field[$number + 1 * $X]);
+        if ($field[$number] + $player === 0) {
+          $field[$number] = $player;
+          $number_array[] = $number;
+          $number = $number + $octas;
+          if (
+            $number === -8 || $number === -7 || $number === -6
+            || $number === -5 || $number === -4 || $number === -3 || $number === -2 || $number === -1 || $number === 0 || $number === 65 || $number === 66 || $number === 67 || $number === 68
+            || $number === 69 || $number === 70 || $number === 71 || $number === 73
+          ) {
+            $X = 8;
+          }
+        } else {
+          if ($field[$number] === $player) {
+            $field[$push] = $player;
+            $X = 8;
+          } else {
+            $number_array[] = $number;
+            foreach ($number_array as $value) {
+              $field[$value] = $field_log[$value];
+            }
+            $X = 8;
+          }
+        }
+      }
+    }
+  }
+}
+
+#8方位を探す作業
+$octas_array = [-9, -8, -7, -1, 1, 7, 8, 9];
+foreach ($octas_array as $octas) {
+  reversi_stone($field, $number, $player, $push, $octas);
+}
+
+
+#なるほど。本当なら、探索をやめる。numberのif部分も関数にできたのか。

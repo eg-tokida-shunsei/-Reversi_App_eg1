@@ -1,18 +1,14 @@
 <?php
 
-#表示
+#表示のプログラム作成
 
 $field = array_fill(1, 64, 0);
-
-print_r($field);
 
 #初期値設定
 $field[28] = $field[37] = 1;
 $field[29] = $field[36] = -1;
 
-#print_r ($field);
-
-foreach($field as $key => $value){
+foreach ($field as $key => $value) {
   $value = "$value";
 }
 
@@ -20,16 +16,29 @@ $field_view = str_replace("-1", "●", $field);
 $field_view = str_replace("1", "○", $field_view);
 $field_view = str_replace("0", "□", $field_view);
 
-$a = 1;
+echo " " . "|" . "1" . "|" . "2" . "|" . "3" . "|" . "4" . "|" . "5" . "|" . "6" . "|" . "7" . "|" . "8" . "|" . " " . "\n";
+echo "1" . "|" . $field_view[1] . "|" . $field_view[2] . "|" . $field_view[3] . "|" . $field_view[4] . "|" . $field_view[5] . "|" . $field_view[6] . "|" . $field_view[7] . "|" . $field_view[8] . "|" . "1" . "\n";
+echo "2" . "|" . $field_view[9] . "|" . $field_view[10] . "|" . $field_view[11] . "|" . $field_view[12] . "|" . $field_view[13] . "|" . $field_view[14] . "|" . $field_view[15] . "|" . $field_view[16] . "|" . "2" . "\n";
+echo "3" . "|" . $field_view[17] . "|" . $field_view[18] . "|" . $field_view[19] . "|" . $field_view[20] . "|" . $field_view[21] . "|" . $field_view[22] . "|" . $field_view[23] . "|" . $field_view[24] . "|" . "3" . "\n";
+echo "4" . "|" . $field_view[25] . "|" . $field_view[26] . "|" . $field_view[27] . "|" . $field_view[28] . "|" . $field_view[29] . "|" . $field_view[30] . "|" . $field_view[31] . "|" . $field_view[32] . "|" . "4" . "\n";
+echo "5" . "|" . $field_view[33] . "|" . $field_view[34] . "|" . $field_view[35] . "|" . $field_view[36] . "|" . $field_view[37] . "|" . $field_view[38] . "|" . $field_view[39] . "|" . $field_view[40] . "|" . "5" . "\n";
+echo "6" . "|" . $field_view[41] . "|" . $field_view[42] . "|" . $field_view[43] . "|" . $field_view[44] . "|" . $field_view[45] . "|" . $field_view[46] . "|" . $field_view[47] . "|" . $field_view[48] . "|" . "6" . "\n";
+echo "7" . "|" . $field_view[49] . "|" . $field_view[50] . "|" . $field_view[51] . "|" . $field_view[52] . "|" . $field_view[53] . "|" . $field_view[54] . "|" . $field_view[55] . "|" . $field_view[56] . "|" . "7" . "\n";
+echo "8" . "|" . $field_view[57] . "|" . $field_view[58] . "|" . $field_view[59] . "|" . $field_view[60] . "|" . $field_view[61] . "|" . $field_view[62] . "|" . $field_view[63] . "|" . $field_view[64] . "|" . "8" . "\n";
+echo " " . "|" . "1" . "|" . "2" . "|" . "3" . "|" . "4" . "|" . "5" . "|" . "6" . "|" . "7" . "|" . "8" . "|" . " " . "\n";
 
-for ($x = 0; $x < 8; $x++) {
-  for ($y = 0; $y < 8; $y++) {
-    $field_sql[$x][$y] = $field_view[$a];
-    $a = $a + 1;
-  }
-}
 
-print_r ($field_sql);
+
+#$a = 1;
+
+#for ($x = 0; $x < 8; $x++) {
+#  for ($y = 0; $y < 8; $y++) {
+#    $field_sql[$x][$y] = $field_view[$a];
+#    $a = $a + 1;
+#  }
+#}
+
+#print_r ($field_sql);
 
 #foreach($field_sql as $key => $value){
 #  print_r ($value);
