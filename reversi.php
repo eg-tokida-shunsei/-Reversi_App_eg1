@@ -2,116 +2,238 @@
 
 #ここに完成したプログラムをまとめる
 
-#作戦2　一次元配列で制作。
+#ゲーム開始の流れ
 
-#空欄0の盤面を作成。
-$field = array_fill(1, 64, 0);
+print("  |GAME START|  \n  -Enterを押してください-  \n");
+echo fgets(STDIN);
+print("1番目のプレイヤー。あなたはplayer_Wです\n-Enterを押してください-\n");
+echo fgets(STDIN);
+print("2番目のプレイヤー。あなたはplayer_Bです\n-Enterを押してください-\n");
+echo fgets(STDIN);
+print("ゲームを開始します。準備はよろしいですか\n[y/n]?\n");
+echo fgets(STDIN);
+print("準備に関係なく、ゲームを開始します\n\n");
+
+#ゲーム
+
 
 
 #初期値設定
+$field = array_fill(1, 64, 0);
 $field[28] = $field[37] = 1;
 $field[29] = $field[36] = -1;
-
-#表示
-$a = 0;
-
-for ($x = 0; $x < 8; $x++) {
-  for ($y = 0; $y < 8; $y++) {
-    $field_sql[$x][$y] = $field[$a];
-    $a = $a + 1;
-  }
-}
-
-$field_view = str_replace(1, "○", $field);
-$field_view = str_replace(-1, "●", $field_view);
-$field_view = str_replace(0, "□", $field_view);
-echo $field_view;
-
-#if文
-
-#例えば、以下のような関数で置く場所をしていしてもらう　これだとあまり親切でないので、行と列の情報からpush出来るようにする→動かせたら。
-print("player is player_W");
-$push= fgets(STDIN);
-echo $push;
-
-#自動パスじゃなくて、手動パス機能付ける。
-
-#で、拾った値で処理をしていく。
-#配列で取り出し、オセロのルールとして問題ないかチェックしていく。
-
-#今回は白ベースにしているけど白と黒でパラメーター分けないといけない。
-#終了したら、player_Wとplayer_Bを変える。例えば、playerというのを作って、処理が終わったら変える。forでターン数を数えて、奇数はplayer_W、偶数はplayer_Bにする。みたいな処理
-for ($turn=1 ; $turn<40 ; $turn++){
-
-}
-
 $player_W = 1;
 $player_B = -1;
+$number = 0;
 
+#置換用の表
 
-#1.隣に石がないときに置けない。
-
-
-
-#2.隣が同じ石の時に置けない。
-
-#if($field[$push+1] = $player_W | $field[$push-1] = $player_W | $field[$push-8] = $player_W | $field[$push+8] = $player_W)
-#{
-#  print("error");
-#}
-
-
-#3.既に置いてある場所には置けない。
-
-if($field[$push] = $player_W)
-{
-  print("error");
+for ($i=1; $i<=64; ++$i) {
+  $field_rep[] =$i;
 }
 
-#4.隣が別の石であるときにはおけるが、置いた石の列の端が同じ石でなければならない。
+$b = 0;
 
-#置けない場所で考えると後半エラーが出そう。置ける場所で考えよう→置けるということは隣が別の色。ここの条件で、1と2はクリア
+for ($x = 1; $x < 9; $x++) {
+  for ($y = 1; $y < 9; $y++) {
+    $replace[$x][$y] = $field_rep[$b];
+    $b = $b + 1;
+  }
+}
 
-if($field[$push+1] === -1 || $field[$push-1] === -1 || $field[$push-8] === -1 || $field[$push+8] === $player_W || $field[$push-9] === $player_W || $field[$push+9] === $player_W || $field[$push-7] === $player_W || $field[$push+7] === $player_W)
+#石ひっくり返すプログラム
+
+function reversi_stone($field, $number, $player, $push, $octas)
 {
-#4の処理はここでカバーする。そうかオセロって置いたらどの位置のも取れるじゃん(2回目)
+  $field_log = $field;
+  for ($X = 1; $X < 8; $X++) {
 
-#配列の出し方。1,2,3,4,5,6,7,8,57,58,59,61,62,63,64,9,17,25,33,41,49,16,24,32,40,48,56を踏んだところまでの配列をだす。
-#セットは[$push-1~-7,$push,$push+1~+7],[$push-7,-14...-49,$push,$push+7,+14...+49][[$push-9,-18...-63,$push,$push+9,+18...+63]で探す。
-#配列をとって取れなかったときにエラーを発生させる→この方法はエラーが起きた時に考えてみる。とりあえず、置く処理。
+    if (
+      $number === 1 || $number === 2 || $number === 3 || $number === 4 || $number === 5 || $number === 6 || $number === 7 || $number === 8 || $number === 57 || $number === 58
+      || $number === 59 || $number === 61 || $number === 62 || $number === 63 || $number === 64 || $number === 9 || $number === 17 || $number === 25 || $number === 33 || $number === 41
+      || $number === 49 || $number === 16 || $number === 24 || $number === 32 || $number === 40 || $number === 48 || $number === 56
+    ) {
+      if ($X === 7) {
+        if ($field[$number] + $player === 0) {
+          $field[$number] = $player;
+          $number_array[] = $number;
 
-#配列とってくる→関数にする必要ある
-for ($X = 1; $X < 8; $X++) {
-  if ($number === 1 || $number === 2 || $number === 3 || $number === 4 || $number === 5 || $number === 6 || $number === 7 || $number === 8 || $number === 57 || $number === 58 || $number === 59 || $number === 61 || $number === 62 || $number === 63 || $number === 64 || $number === 9 || $number === 17 || $number === 25 || $number === 33 || $number === 41 || $number === 49 || $number === 16 || $number === 24 || $number === 32 || $number === 40 || $number === 48 || $number === 56 || $field[$number + 1 * $X] === $player) {
-    if($X === 7){
-      if ($field[$number + 1 * $X] + $player === 0) {
-        $field[$number + 1 * $X] = $player;
+          foreach ($number_array as $value) {
+            $field[$value] = $field_log[$value];
+          }
+          break;
+        } else {
+          if ($field[$number] === $player) {
+            $field[$push] = $player;
+            break;
+          } else {
+            $number_array[] = $number;
+            foreach ($number_array as $value) {
+              $field[$value] = $field_log[$value];
+            }
+            break;
+          }
+        }
+      } else {
+        if ($field[$number] === $player) {
+          $field[$push] = $player;
+          break;
+        } else {
+          $number_array[] = $number;
+          print_r($number_array);
+          foreach ($number_array as $value) {
+            $field[$value] = $field_log[$value];
+          }
+          break;
+        }
       }
-    }else{
-    $X = 8;
-    }
-    #print($number);
-    #print($push);
-  } else {
-    $number = $push;
-    #$check = $field[$number + 1 * $X];
-    print_r($field[$number + 1 * $X]);
-    if ($field[$number + 1 * $X] + $player === 0) {
-      $field[$number + 1 * $X] = $player;
+
+    } else {
+      if ($X === 1) {
+        $number = $push + $octas;
+        if ($number <= 0 || $number >= 65) {
+          break;
+        } else {
+          if ($field[$number] + $player === 0) {
+            $field[$number] = $player;
+            $number_array = [$number];
+            print_r($number_array);
+            $number = $number + $octas;
+            if ($number <= 0 || $number >= 65) {
+              break;
+            }
+          } else {
+            if ($field[$number] === $player) {
+              $field[$push] = $player;
+              break;
+            } else {
+              $number_array[] = $number;
+              foreach ($number_array as $value) {
+                $field[$value] = $field_log[$value];
+              }
+              break;
+            }
+          }
+        }
+      } else {
+
+
+        if ($field[$number] + $player === 0) {
+          $field[$number] = $player;
+          $number_array[] = $number;
+          $number = $number + $octas;
+          if ($number <= 0 || $number >= 65) {
+            break;
+          }
+        } else {
+          if ($field[$number] === $player) {
+            $field[$push] = $player;
+            break;
+          } else {
+            $number_array[] = $number;
+            foreach ($number_array as $value) {
+              $field[$value] = $field_log[$value];
+            }
+            break;
+          }
+        }
+      }
     }
   }
-
-  #echo $field[$number + 1 * $X]+$player;
-
-  $number = [$number + 1 * $X];
 }
-$field[$push] = $player;
 
+#石表示プログラム
 
+function reversi_view($field){
+foreach ($field as $key => $value) {
+  $value = "$value";
 }
-else
+
+$field_view = str_replace("-1", "●", $field);
+$field_view = str_replace("1", "○", $field_view);
+$field_view = str_replace("0", "□", $field_view);
+
+echo " " . "|" . "1" . "|" . "2" . "|" . "3" . "|" . "4" . "|" . "5" . "|" . "6" . "|" . "7" . "|" . "8" . "|" . " " . "\n";
+echo "1" . "|" . $field_view[1] . "|" . $field_view[2] . "|" . $field_view[3] . "|" . $field_view[4] . "|" . $field_view[5] . "|" . $field_view[6] . "|" . $field_view[7] . "|" . $field_view[8] . "|" . "1" . "\n";
+echo "2" . "|" . $field_view[9] . "|" . $field_view[10] . "|" . $field_view[11] . "|" . $field_view[12] . "|" . $field_view[13] . "|" . $field_view[14] . "|" . $field_view[15] . "|" . $field_view[16] . "|" . "2" . "\n";
+echo "3" . "|" . $field_view[17] . "|" . $field_view[18] . "|" . $field_view[19] . "|" . $field_view[20] . "|" . $field_view[21] . "|" . $field_view[22] . "|" . $field_view[23] . "|" . $field_view[24] . "|" . "3" . "\n";
+echo "4" . "|" . $field_view[25] . "|" . $field_view[26] . "|" . $field_view[27] . "|" . $field_view[28] . "|" . $field_view[29] . "|" . $field_view[30] . "|" . $field_view[31] . "|" . $field_view[32] . "|" . "4" . "\n";
+echo "5" . "|" . $field_view[33] . "|" . $field_view[34] . "|" . $field_view[35] . "|" . $field_view[36] . "|" . $field_view[37] . "|" . $field_view[38] . "|" . $field_view[39] . "|" . $field_view[40] . "|" . "5" . "\n";
+echo "6" . "|" . $field_view[41] . "|" . $field_view[42] . "|" . $field_view[43] . "|" . $field_view[44] . "|" . $field_view[45] . "|" . $field_view[46] . "|" . $field_view[47] . "|" . $field_view[48] . "|" . "6" . "\n";
+echo "7" . "|" . $field_view[49] . "|" . $field_view[50] . "|" . $field_view[51] . "|" . $field_view[52] . "|" . $field_view[53] . "|" . $field_view[54] . "|" . $field_view[55] . "|" . $field_view[56] . "|" . "7" . "\n";
+echo "8" . "|" . $field_view[57] . "|" . $field_view[58] . "|" . $field_view[59] . "|" . $field_view[60] . "|" . $field_view[61] . "|" . $field_view[62] . "|" . $field_view[63] . "|" . $field_view[64] . "|" . "8" . "\n";
+echo " " . "|" . "1" . "|" . "2" . "|" . "3" . "|" . "4" . "|" . "5" . "|" . "6" . "|" . "7" . "|" . "8" . "|" . " " . "\n";
+}
+
+#プレイヤー変換と回数処理
+#勝利条件
+
+for ($turn=1 ; $turn<150 ; $turn++){
+  if($turn % 2 == 1){
+    $player = $player_W;
+    $player_name = 'player_W';
+  }
+  else{
+    $player = $player_B;
+    $player_name = 'player_B';
+  }
+
+if(in_array(0, $field)){
+  //ゲームをするプログラム
+while($field_check === $field){
+echo $player_name . '\n';
+print("あなたのターンです\n置きたい場所の縦列の番号と横列の番号を入力してください\n\n※石をひっくり返せない場所に置くともう一度選択する必要が出てきます。パスをする場合、縦列で0か横列で0を入力してください");
+
+reversi_view($field);
+
+//数字だけしかないように入力制限をする。パス機能を付ける
+print("縦列：");
+$col = fgets(STDIN);
+print("横列：");
+$row = fgets(STDIN);
+
+if($col === 0 || $row ===0){
+  break;
+}
+
+$push = $replace[$col][$row];
+
+
+#置いた石を8方位を探してひっくり返す作業
+$octas_array = [-9, -8, -7, -1, 1, 7, 8, 9];
+
+if($field[$push] === $player)
 {
-  print("error");
+}
+else{
+foreach ($octas_array as $octas) {
+  reversi_stone($field, $number, $player, $push, $octas);
+}
+}
+$field_check = $field;
 }
 
-#基本の動き作り終えたらメソッドにして簡略化して、組み立てる、
+}
+else{
+  $W_result = array_keys($field, 1);
+  $B_result = array_keys($field, -1);
+
+  if(count($W_result) > count($B_result)){
+    print("player_W Win !");
+  }
+  elseif(count($W_result) < count($B_result)){
+    print("player_B Win !");
+  }
+  else{
+    print("you are draw !");
+  }
+  break;
+}
+
+
+}
+
+
+
+
+// デバックするときに、注目する必要がある点。

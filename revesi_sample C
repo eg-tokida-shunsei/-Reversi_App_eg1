@@ -33,30 +33,30 @@ function reversi_stone($field, $number, $player, $push, $octas)
           foreach ($number_array as $value) {
             $field[$value] = $field_log[$value];
           }
-          $X = 8;
+          break;
         } else {
           if ($field[$number] === $player) {
             $field[$push] = $player;
-            $X = 8;
+            break;
           } else {
             $number_array[] = $number;
             foreach ($number_array as $value) {
               $field[$value] = $field_log[$value];
             }
-            $X = 8;
+            break;
           }
         }
       } else {
         if ($field[$number] === $player) {
           $field[$push] = $player;
-          $X = 8;
+          break;
         } else {
           $number_array[] = $number;
           print_r($number_array);
           foreach ($number_array as $value) {
             $field[$value] = $field_log[$value];
           }
-          $X = 8;
+          break;
         }
       }
       #print($number);
@@ -64,35 +64,27 @@ function reversi_stone($field, $number, $player, $push, $octas)
     } else {
       if ($X === 1) {
         $number = $push + $octas;
-        if (
-          $number === -8 || $number === -7 || $number === -6
-          || $number === -5 || $number === -4 || $number === -3 || $number === -2 || $number === -1 || $number === 0 || $number === 65 || $number === 66 || $number === 67 || $number === 68
-          || $number === 69 || $number === 70 || $number === 71 || $number === 73
-        ) {
-          $X = 8;
+        if ($number <= 0 || $number >= 65) {
+          break;
         } else {
           if ($field[$number] + $player === 0) {
             $field[$number] = $player;
             $number_array = [$number];
             print_r($number_array);
             $number = $number + $octas;
-            if (
-              $number === -8 || $number === -7 || $number === -6
-              || $number === -5 || $number === -4 || $number === -3 || $number === -2 || $number === -1 || $number === 0 || $number === 65 || $number === 66 || $number === 67 || $number === 68
-              || $number === 69 || $number === 70 || $number === 71 || $number === 73
-            ) {
-              $X = 8;
+            if ($number <= 0 || $number >= 65) {
+              break;
             }
           } else {
             if ($field[$number] === $player) {
               $field[$push] = $player;
-              $X = 8;
+              break;
             } else {
               $number_array[] = $number;
               foreach ($number_array as $value) {
                 $field[$value] = $field_log[$value];
               }
-              $X = 8;
+              break;
             }
           }
         }
@@ -105,23 +97,19 @@ function reversi_stone($field, $number, $player, $push, $octas)
           $field[$number] = $player;
           $number_array[] = $number;
           $number = $number + $octas;
-          if (
-            $number === -8 || $number === -7 || $number === -6
-            || $number === -5 || $number === -4 || $number === -3 || $number === -2 || $number === -1 || $number === 0 || $number === 65 || $number === 66 || $number === 67 || $number === 68
-            || $number === 69 || $number === 70 || $number === 71 || $number === 73
-          ) {
-            $X = 8;
+          if ($number <= 0 || $number >= 65) {
+            break;
           }
         } else {
           if ($field[$number] === $player) {
             $field[$push] = $player;
-            $X = 8;
+            break;
           } else {
             $number_array[] = $number;
             foreach ($number_array as $value) {
               $field[$value] = $field_log[$value];
             }
-            $X = 8;
+            break;
           }
         }
       }
