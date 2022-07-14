@@ -7,7 +7,7 @@ $field[28] = $field[37] = 1;
 $field[29] = $field[36] = -1;
 
 
-$push = 9;
+$push = 44;
 #$push
 $player = 1;
 $number = 0;
@@ -64,17 +64,24 @@ function reversi_stone($field, $number, $player, $push, $octas)
     } else {
       if ($X === 1) {
         $number = $push + $octas;
-        if ($number <= 0 || $number >= 65) {
-          break;
-        } else {
+        // if ($number <= 0 || $number >= 65) {
+        // break;
+        // } else {
+          echo "\n";
+          echo $number;
+          echo "\n";
+          echo $field[$number] + $player;
           if ($field[$number] + $player === 0) {
             $field[$number] = $player;
             $number_array = [$number];
-            print_r($number_array);
+            echo "\n";
+            echo $field[36];
             $number = $number + $octas;
-            if ($number <= 0 || $number >= 65) {
-              break;
-            }
+            echo "\n";
+            echo $number;
+            // if ($number <= 0 || $number >= 65) {
+            //   break;
+            // }
           } else {
             if ($field[$number] === $player) {
               $field[$push] = $player;
@@ -84,22 +91,23 @@ function reversi_stone($field, $number, $player, $push, $octas)
               foreach ($number_array as $value) {
                 $field[$value] = $field_log[$value];
               }
+              // $X = 8;
               break;
             }
           }
-        }
+        // }
       } else {
 
         #echo '$number:'.gettype($number) . "\n";
-        #$check = $field[$number + 1 * $X];
+        $check = $field[$number + 1 * $X];
         #print_r($field[$number + 1 * $X]);
         if ($field[$number] + $player === 0) {
           $field[$number] = $player;
           $number_array[] = $number;
           $number = $number + $octas;
-          if ($number <= 0 || $number >= 65) {
-            break;
-          }
+          // if ($number <= 0 || $number >= 65) {
+          //   break;
+          // }
         } else {
           if ($field[$number] === $player) {
             $field[$push] = $player;
@@ -115,13 +123,30 @@ function reversi_stone($field, $number, $player, $push, $octas)
       }
     }
   }
+  echo "\n";
+  echo $field[28];
+echo $field[36];
+echo $field[44];
 }
 
+echo $field[28];
+echo $field[36];
+echo $field[44];
+
+$octas = -8;
+reversi_stone($field, $number, $player, $push, $octas);
+
+// echo "\n";
+// echo $field[28];
+// echo $field[36];
+// echo $field[44];
+
+
 #8方位を探す作業
-$octas_array = [-9, -8, -7, -1, 1, 7, 8, 9];
-foreach ($octas_array as $octas) {
-  reversi_stone($field, $number, $player, $push, $octas);
-}
+// $octas_array = [-9, -8, -7, -1, 1, 7, 8, 9];
+// foreach ($octas_array as $octas) {
+//   reversi_stone($field, $number, $player, $push, $octas);
+// }
 
 
 #なるほど。本当なら、探索をやめる。numberのif部分も関数にできたのか。

@@ -46,11 +46,38 @@ for ($x = 1; $x < 9; $x++) {
 
 #colとrowを指定してもらうようにする
 
-$col = 1;
-$row = 5;
+// print("縦列：");
+$col = fgets(STDIN);
+// print("横列：");
+$row = fgets(STDIN);
 
-print_r($replace);
+var_dump($col);
+var_dump($row);
 
-$push = $replace[$col][$row];
+$col_int = intval($col);
+$row_int = intval($row);
 
-echo $push;
+var_dump($col_int);
+var_dump($row_int);
+echo '<br/>';
+
+echo $col_int;
+echo '<br/>';
+
+echo $row_int;
+echo '<br/>';
+
+print($col_int);
+echo '<br/>';
+
+print($row_int);
+echo '<br/>';
+
+// $col = 2;
+// $row = 5;
+
+//print_r($replace);
+
+//$push = $replace[$col][$row];
+
+//echo $push;

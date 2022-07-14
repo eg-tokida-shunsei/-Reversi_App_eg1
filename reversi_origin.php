@@ -45,79 +45,8 @@ for ($x = 1; $x < 9; $x++) {
 
 #石ひっくり返すプログラム
 
-// function reversi_stone($field, $number, $player, $push, $octas)
-// {
-// }
-
-#石表示プログラム
-
-function reversi_view($field){
-foreach ($field as $key => $value) {
-  $value = "$value";
-}
-
-$field_view = str_replace("-1", "○", $field);
-$field_view = str_replace("1", "●", $field_view);
-$field_view = str_replace("0", "□", $field_view);
-
-echo " " . "|" . "1" . "|" . "2" . "|" . "3" . "|" . "4" . "|" . "5" . "|" . "6" . "|" . "7" . "|" . "8" . "|" . " " . "\n";
-echo "1" . "|" . $field_view[1] . "|" . $field_view[2] . "|" . $field_view[3] . "|" . $field_view[4] . "|" . $field_view[5] . "|" . $field_view[6] . "|" . $field_view[7] . "|" . $field_view[8] . "|" . "1" . "\n";
-echo "2" . "|" . $field_view[9] . "|" . $field_view[10] . "|" . $field_view[11] . "|" . $field_view[12] . "|" . $field_view[13] . "|" . $field_view[14] . "|" . $field_view[15] . "|" . $field_view[16] . "|" . "2" . "\n";
-echo "3" . "|" . $field_view[17] . "|" . $field_view[18] . "|" . $field_view[19] . "|" . $field_view[20] . "|" . $field_view[21] . "|" . $field_view[22] . "|" . $field_view[23] . "|" . $field_view[24] . "|" . "3" . "\n";
-echo "4" . "|" . $field_view[25] . "|" . $field_view[26] . "|" . $field_view[27] . "|" . $field_view[28] . "|" . $field_view[29] . "|" . $field_view[30] . "|" . $field_view[31] . "|" . $field_view[32] . "|" . "4" . "\n";
-echo "5" . "|" . $field_view[33] . "|" . $field_view[34] . "|" . $field_view[35] . "|" . $field_view[36] . "|" . $field_view[37] . "|" . $field_view[38] . "|" . $field_view[39] . "|" . $field_view[40] . "|" . "5" . "\n";
-echo "6" . "|" . $field_view[41] . "|" . $field_view[42] . "|" . $field_view[43] . "|" . $field_view[44] . "|" . $field_view[45] . "|" . $field_view[46] . "|" . $field_view[47] . "|" . $field_view[48] . "|" . "6" . "\n";
-echo "7" . "|" . $field_view[49] . "|" . $field_view[50] . "|" . $field_view[51] . "|" . $field_view[52] . "|" . $field_view[53] . "|" . $field_view[54] . "|" . $field_view[55] . "|" . $field_view[56] . "|" . "7" . "\n";
-echo "8" . "|" . $field_view[57] . "|" . $field_view[58] . "|" . $field_view[59] . "|" . $field_view[60] . "|" . $field_view[61] . "|" . $field_view[62] . "|" . $field_view[63] . "|" . $field_view[64] . "|" . "8" . "\n";
-echo " " . "|" . "1" . "|" . "2" . "|" . "3" . "|" . "4" . "|" . "5" . "|" . "6" . "|" . "7" . "|" . "8" . "|" . " " . "\n";
-}
-
-#プレイヤー変換と回数処理
-#勝利条件
-
-for ($turn=1 ; $turn<150 ; $turn++){
-  if($turn % 2 == 1){
-    $player = $player_W;
-    $player_name = 'player_W';
-  }
-  else{
-    $player = $player_B;
-    $player_name = 'player_B';
-  }
-
-if(in_array(0, $field)){
-  //ゲームをするプログラム
-
-reversi_view($field);
-echo "\n" . $player_name . "\n";
-print("あなたのターンです\n置きたい場所の縦列の番号と横列の番号を入力してください\n\n※石をひっくり返せない場所に置くともう一度選択する必要が出てきます。パスをする場合、縦列で0か横列で0を入力してください\n");
-
-//数字だけしかないように入力制限をする。パス機能を付ける
-print("縦列：");
-$col_f = fgets(STDIN);
-$col = intval($col_f);
-
-print("横列：");
-$row_f = fgets(STDIN);
-$row = intval($row_f);
-
-if($col === 0 || $row ===0){
-  break;
-}
-
-$push = $replace[$row][$col];
-
-var_dump($push);
-
-#置いた石を8方位を探してひっくり返す作業
-$octas_array = [-9, -8, -7, -1, 1, 7, 8, 9];
-
-if($field[$push] === $player)
+function reversi_stone($field, $number, $player, $push, $octas)
 {
-}
-else{
-foreach ($octas_array as $octas) {
-  $number = 0;
   $field_log = $field;
   for ($X = 1; $X < 8; $X++) {
 
@@ -222,6 +151,84 @@ foreach ($octas_array as $octas) {
       }
     }
   }
+}
+
+#石表示プログラム
+
+function reversi_view($field){
+foreach ($field as $key => $value) {
+  $value = "$value";
+}
+
+$field_view = str_replace("-1", "○", $field);
+$field_view = str_replace("1", "●", $field_view);
+$field_view = str_replace("0", "□", $field_view);
+
+echo " " . "|" . "1" . "|" . "2" . "|" . "3" . "|" . "4" . "|" . "5" . "|" . "6" . "|" . "7" . "|" . "8" . "|" . " " . "\n";
+echo "1" . "|" . $field_view[1] . "|" . $field_view[2] . "|" . $field_view[3] . "|" . $field_view[4] . "|" . $field_view[5] . "|" . $field_view[6] . "|" . $field_view[7] . "|" . $field_view[8] . "|" . "1" . "\n";
+echo "2" . "|" . $field_view[9] . "|" . $field_view[10] . "|" . $field_view[11] . "|" . $field_view[12] . "|" . $field_view[13] . "|" . $field_view[14] . "|" . $field_view[15] . "|" . $field_view[16] . "|" . "2" . "\n";
+echo "3" . "|" . $field_view[17] . "|" . $field_view[18] . "|" . $field_view[19] . "|" . $field_view[20] . "|" . $field_view[21] . "|" . $field_view[22] . "|" . $field_view[23] . "|" . $field_view[24] . "|" . "3" . "\n";
+echo "4" . "|" . $field_view[25] . "|" . $field_view[26] . "|" . $field_view[27] . "|" . $field_view[28] . "|" . $field_view[29] . "|" . $field_view[30] . "|" . $field_view[31] . "|" . $field_view[32] . "|" . "4" . "\n";
+echo "5" . "|" . $field_view[33] . "|" . $field_view[34] . "|" . $field_view[35] . "|" . $field_view[36] . "|" . $field_view[37] . "|" . $field_view[38] . "|" . $field_view[39] . "|" . $field_view[40] . "|" . "5" . "\n";
+echo "6" . "|" . $field_view[41] . "|" . $field_view[42] . "|" . $field_view[43] . "|" . $field_view[44] . "|" . $field_view[45] . "|" . $field_view[46] . "|" . $field_view[47] . "|" . $field_view[48] . "|" . "6" . "\n";
+echo "7" . "|" . $field_view[49] . "|" . $field_view[50] . "|" . $field_view[51] . "|" . $field_view[52] . "|" . $field_view[53] . "|" . $field_view[54] . "|" . $field_view[55] . "|" . $field_view[56] . "|" . "7" . "\n";
+echo "8" . "|" . $field_view[57] . "|" . $field_view[58] . "|" . $field_view[59] . "|" . $field_view[60] . "|" . $field_view[61] . "|" . $field_view[62] . "|" . $field_view[63] . "|" . $field_view[64] . "|" . "8" . "\n";
+echo " " . "|" . "1" . "|" . "2" . "|" . "3" . "|" . "4" . "|" . "5" . "|" . "6" . "|" . "7" . "|" . "8" . "|" . " " . "\n";
+}
+
+#プレイヤー変換と回数処理
+#勝利条件
+
+for ($turn=1 ; $turn<150 ; $turn++){
+  if($turn % 2 == 1){
+    $player = $player_W;
+    $player_name = 'player_W';
+  }
+  else{
+    $player = $player_B;
+    $player_name = 'player_B';
+  }
+
+if(in_array(0, $field)){
+  //ゲームをするプログラム
+
+reversi_view($field);
+echo "\n" . $player_name . "\n";
+print("あなたのターンです\n置きたい場所の縦列の番号と横列の番号を入力してください\n\n※石をひっくり返せない場所に置くともう一度選択する必要が出てきます。パスをする場合、縦列で0か横列で0を入力してください\n");
+
+//数字だけしかないように入力制限をする。パス機能を付ける
+print("縦列：");
+$col_f = fgets(STDIN);
+$col = intval($col_f);
+
+print("横列：");
+$row_f = fgets(STDIN);
+$row = intval($row_f);
+
+if($col === 0 || $row ===0){
+  break;
+}
+
+$push = $replace[$row][$col];
+
+var_dump($push);
+
+#置いた石を8方位を探してひっくり返す作業
+$octas_array = [-9, -8, -7, -1, 1, 7, 8, 9];
+
+if($field[$push] === $player)
+{
+}
+else{
+foreach ($octas_array as $octas) {
+  $number = 0;
+  reversi_stone($field, $number, $player, $push, $octas);
+  echo $field[28];
+  echo "■";
+  echo $field[36];
+  echo "■";
+  echo $field[44];
+  echo "■";
 }
 }
 

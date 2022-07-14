@@ -7,16 +7,16 @@ $field[28] = $field[37] = 1;
 $field[29] = $field[36] = -1;
 
 #実験用
-$field[34] = $field[35] = $field[39] = -1;
-$field[40] = -1;
-$field[41] = 1;
+// $field[34] = $field[35] = $field[39] = -1;
+// $field[40] = -1;
+// $field[41] = 1;
 
-$field[10] = $field[11] = $field[12] = $field[14] = $field[15] = -1;
-$field[16] = 0;
-$field[13] = 1;
+// $field[10] = $field[11] = $field[12] = $field[14] = $field[15] = -1;
+// $field[16] = 0;
+// $field[13] = 1;
 
 #print_r($field);
-$push = 38;
+$push = 44;
 #$push
 $player = 1;
 $number = 0;
@@ -26,18 +26,18 @@ $X = 1;
 $field_log = $field;
 #print($field[$number + 1 * $X]);
 
-// echo $field[33];
-// echo $field[34];
-// echo $field[35];
+echo $field[28];
+echo $field[36];
+echo $field[44];
 // echo $field[36];
 // echo $field[37];
 // echo $field[38];
 // echo $field[39];
 // echo $field[40] . "\n\n";
 
-for($Y = 38;  $Y <= 41; $Y++){
-  echo $field[$Y] . "\n";
-}
+// for($Y = 38;  $Y <= 41; $Y++){
+//   echo $field[$Y] . "\n";
+// }
 
 #
 
@@ -50,7 +50,7 @@ for ($X = 1; $X < 8; $X++) {
       if ($field[$number] + $player === 0) {
         $field[$number] = $player;
         $number_array[] = $number;
-        $number = $number + 1;
+        // $number = $number -8;
 
         foreach ($number_array as $value) {
           $field[$value] = $field_log[$value];
@@ -64,32 +64,35 @@ for ($X = 1; $X < 8; $X++) {
           foreach ($number_array as $value) {
             $field[$value] = $field_log[$value];
           }
-          $X = 8;
+          // $X = 8;
+          break;
         }
       }
     } else {
       if ($field[$number] === $player) {
         $field[$push] = $player;
-        $X = 8;
+        // $X = 8;
+        break;
       } else {
         $number_array[] = $number;
         //print_r($number_array);
         foreach ($number_array as $value) {
           $field[$value] = $field_log[$value];
         }
-        $X = 8;
+        // $X = 8;
+        break;
       }
     }
     #print($number);
     #print($push);
   } else {
     if ($X === 1) {
-      $number = $push + 1;
+      $number = $push -8;
       if ($field[$number] + $player === 0) {
         $field[$number] = $player;
         $number_array = [$number];
         //print_r($number_array);
-        $number = $number + 1;
+        $number = $number -8;
       } else {
         if ($field[$number] === $player) {
           $field[$push] = $player;
@@ -99,7 +102,8 @@ for ($X = 1; $X < 8; $X++) {
           foreach ($number_array as $value) {
             $field[$value] = $field_log[$value];
           }
-          $X = 8;
+          // $X = 8;
+          break;
         }
       }
     } else {
@@ -110,32 +114,35 @@ for ($X = 1; $X < 8; $X++) {
       if ($field[$number] + $player === 0) {
         $field[$number] = $player;
         $number_array[] = $number;
-        $number = $number + 1;
+        $number = $number -8;
       } else {
         if ($field[$number] === $player) {
           $field[$push] = $player;
-          $X = 8;
+          // $X = 8;
+          break;
         } else {
           $number_array[] = $number;
           foreach ($number_array as $value) {
             $field[$value] = $field_log[$value];
           }
-          $X = 8;
+          // $X = 8;
+          break;
         }
       }
     }
   }
+}
 
 
   #echo $field[$number + 1 * $X]+$player;
 
-}
 
 
 
-// echo $field[33];
-// echo $field[34];
-// echo $field[35];
+echo "\n";
+echo $field[28];
+echo $field[36];
+echo $field[44];
 // echo $field[36];
 // echo $field[37];
 // echo $field[38];
@@ -144,11 +151,9 @@ for ($X = 1; $X < 8; $X++) {
 
 // echo $field[40];
 
- echo "\n";
-
-for($Y = 38;  $Y <= 41; $Y++){
-  echo $field[$Y] . "\n";
-}
+// for($Y = 38;  $Y <= 41; $Y++){
+//   echo $field[$Y] . "\n";
+// }
 
 #関数化して8方向全部に試す方法+ゲームとしてすするめるのであれば、ひっくり返せなかったときにもう一度行動できる方法も追加する。
 
