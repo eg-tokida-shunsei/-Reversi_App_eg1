@@ -1,0 +1,1493 @@
+<?php
+
+#ここに完成したプログラムをまとめる
+
+#ゲーム開始の流れ
+
+print("  |GAME START|  \n  -Enterを押してください-  \n");
+echo fgets(STDIN);
+print("1番目のプレイヤー。あなたはplayer_Wです\n-Enterを押してください-\n");
+echo fgets(STDIN);
+print("2番目のプレイヤー。あなたはplayer_Bです\n-Enterを押してください-\n");
+echo fgets(STDIN);
+print("ゲームを開始します。準備はよろしいですか\n[y/n]?\n");
+echo fgets(STDIN);
+print("準備に関係なく、ゲームを開始します\n\n");
+
+#ゲーム
+
+
+
+#初期値設定
+$field = array_fill(1, 64, 0);
+$field[28] = $field[37] = 1;
+$field[29] = $field[36] = -1;
+$player_W = 1;
+$player_B = -1;
+$field_check = $field;
+
+#エラー条件
+$field[17] = $field[18] = $field[19] = $field[20] = $field[21] = $field[25] = $field[26] = $field[27] = $field[28] = $field[29] = $field[30] = $field[34] = $field[36] = $field[37] = $field[43] = $field[44] = $field[12] = 1;
+$field[9] = $field[35] = $field[41] = $field[42] = $field[51] = $field[58] = $field[59] = $field[60] =  -1;
+
+// reversi_stone($field, $number, $player, $push, $octas);
+//やっぱり－8の時怪しいな。それ以外にもひっくり返せないパターンがわからない。
+//置けないときがあるのは、octasの探す順番で、最後に石を置かないパターンが来ると消しちゃう可能性。
+//後置けないところにおいても相手をひっくり返してしまうのは、端で止める処理が上手く行っていない可能性。
+//挟んでいない角を取ってしまう謎→これも端の処理
+//わかった！！角で止まる処理を1列目8列目で行っているから、そこで、縦を取ったり、横を取ったりする処理をしようとするとおかしなことになる。
+//処理をチェックする順番を考えた方が良い感じ。
+//置けない場所に置いたりひっくり返せないのにひっくり返してるのは駄目ですね。
+//breakの処理があっているのか気になる。
+
+//直っていそうなエラー
+
+
+#置換用の表
+
+for ($i = 1; $i <= 64; ++$i) {
+  $field_rep[] = $i;
+}
+
+$b = 0;
+
+for ($x = 1; $x < 9; $x++) {
+  for ($y = 1; $y < 9; $y++) {
+    $replace[$x][$y] = $field_rep[$b];
+    $b = $b + 1;
+  }
+}
+
+#石ひっくり返すプログラム
+
+// function reversi_stone($field, $number, $player, $push, $octas)
+// {
+// }
+
+#石表示プログラム
+
+function reversi_view($field)
+{
+  foreach ($field as $key => $value) {
+    $value = "$value";
+  }
+
+  $field_view = str_replace("-1", "○", $field);
+  $field_view = str_replace("1", "●", $field_view);
+  $field_view = str_replace("0", " ", $field_view);
+
+  echo " " . "|" . "1" . "|" . "2" . "|" . "3" . "|" . "4" . "|" . "5" . "|" . "6" . "|" . "7" . "|" . "8" . "|" . " " . "\n";
+  echo "1" . "|" . $field_view[1] . "|" . $field_view[2] . "|" . $field_view[3] . "|" . $field_view[4] . "|" . $field_view[5] . "|" . $field_view[6] . "|" . $field_view[7] . "|" . $field_view[8] . "|" . "1" . "\n";
+  echo "2" . "|" . $field_view[9] . "|" . $field_view[10] . "|" . $field_view[11] . "|" . $field_view[12] . "|" . $field_view[13] . "|" . $field_view[14] . "|" . $field_view[15] . "|" . $field_view[16] . "|" . "2" . "\n";
+  echo "3" . "|" . $field_view[17] . "|" . $field_view[18] . "|" . $field_view[19] . "|" . $field_view[20] . "|" . $field_view[21] . "|" . $field_view[22] . "|" . $field_view[23] . "|" . $field_view[24] . "|" . "3" . "\n";
+  echo "4" . "|" . $field_view[25] . "|" . $field_view[26] . "|" . $field_view[27] . "|" . $field_view[28] . "|" . $field_view[29] . "|" . $field_view[30] . "|" . $field_view[31] . "|" . $field_view[32] . "|" . "4" . "\n";
+  echo "5" . "|" . $field_view[33] . "|" . $field_view[34] . "|" . $field_view[35] . "|" . $field_view[36] . "|" . $field_view[37] . "|" . $field_view[38] . "|" . $field_view[39] . "|" . $field_view[40] . "|" . "5" . "\n";
+  echo "6" . "|" . $field_view[41] . "|" . $field_view[42] . "|" . $field_view[43] . "|" . $field_view[44] . "|" . $field_view[45] . "|" . $field_view[46] . "|" . $field_view[47] . "|" . $field_view[48] . "|" . "6" . "\n";
+  echo "7" . "|" . $field_view[49] . "|" . $field_view[50] . "|" . $field_view[51] . "|" . $field_view[52] . "|" . $field_view[53] . "|" . $field_view[54] . "|" . $field_view[55] . "|" . $field_view[56] . "|" . "7" . "\n";
+  echo "8" . "|" . $field_view[57] . "|" . $field_view[58] . "|" . $field_view[59] . "|" . $field_view[60] . "|" . $field_view[61] . "|" . $field_view[62] . "|" . $field_view[63] . "|" . $field_view[64] . "|" . "8" . "\n";
+  echo " " . "|" . "1" . "|" . "2" . "|" . "3" . "|" . "4" . "|" . "5" . "|" . "6" . "|" . "7" . "|" . "8" . "|" . " " . "\n";
+}
+
+#プレイヤー変換と回数処理
+#勝利条件
+
+for ($turn = 1; $turn < 150; $turn++) {
+  if ($turn % 2 == 1) {
+    $player = $player_W;
+    $player_name = 'player_W';
+  } else {
+    $player = $player_B;
+    $player_name = 'player_B';
+  }
+
+  if (in_array(0, $field)) {
+    //ゲームをするプログラム
+
+    reversi_view($field);
+    echo "\n" . $player_name . "\n";
+    print("あなたのターンです\n置きたい場所の縦列の番号と横列の番号を入力してください\n\n※石をひっくり返せない場所に置くともう一度選択する必要が出てきます。パスをする場合、縦列で0か横列で0を入力してください\n");
+
+    //数字だけしかないように入力制限をする。パス機能を付ける
+    print("縦列：");
+    $col_f = fgets(STDIN);
+    $col = intval($col_f);
+
+    print("横列：");
+    $row_f = fgets(STDIN);
+    $row = intval($row_f);
+
+    if ($col === 0 || $row === 0) {
+      $turn = $turn + 1;
+      echo "\n";
+      print("pass!!");
+      echo "\n";
+    } else {
+
+      $push = $replace[$row][$col];
+
+      // var_dump($push);
+
+      #置いた石を8方位を探してひっくり返す作業
+      $octas_array = [-9, -8, -7, -1, 1, 7, 8, 9];
+
+      if ($field[$push] === $player_W || $field[$push] === $player_B) {
+      } else {
+        foreach ($octas_array as $octas) {
+          $number = 0;
+          $field_log = $field;
+          for ($X = 1; $X < 8; $X++) {
+
+
+            if($push === 1){
+              if ($number === 8){
+                if ($X === 7) {
+                  if ($field[$number] + $player === 0) {
+                    $field[$number] = $player;
+                    $number_array[] = $number;
+  
+                    #一番端に自分と同じ石がなかった時、リセット
+  
+                    foreach ($number_array as $value) {
+                      $field[$value] = $field_log[$value];
+                    }
+                    break;
+                  } else {
+                    if ($field[$number] === $player) {
+                      #一番端が自分の石ならひっくり返す(今までひっくり返してきた石を元に戻さない)
+                      $field[$push] = $player;
+                      break;
+                    } else {
+                      #違った場合リセット。
+                      $number_array[] = $number;
+                      foreach ($number_array as $value) {
+                        $field[$value] = $field_log[$value];
+                      }
+                      break;
+                    }
+                  }
+                } else {
+                  if ($field[$number] === $player) {
+                    #一番端が自分の石ならひっくり返す(今までひっくり返してきた石を元に戻さない)
+                    $field[$push] = $player;
+                    break;
+                  } else {
+                    #一番端が自分の石以外ならリセット
+                    $number_array[] = $number;
+                    foreach ($number_array as $value) {
+                      $field[$value] = $field_log[$value];
+                    }
+                    break;
+                  }
+                }
+              } else {
+                if ($X === 1) {
+                  #探索する場所を決定し八方位探索する。
+                  $number = $push + $octas;
+                  if ($number <= 0 || $number >= 65) {
+                    break;
+                  } else {
+                    if ($field[$number] + $player === 0) {
+                      #石をひっくり返し、ひっくり返した場所の保存
+                      $field[$number] = $player;
+                      $number_array = [$number];
+                      $number = $number + $octas;
+                      if ($number <= 0 || $number >= 65) {
+                        break;
+                      }
+                    } else {
+                      if ($field[$number] === $player) {
+                        break;
+                      } else {
+                        #違ったときリセット
+                        $number_array[] = $number;
+                        foreach ($number_array as $value) {
+                          $field[$value] = $field_log[$value];
+                        }
+                        break;
+                      }
+                    }
+                  }
+                } else {
+                  #1以外の処理
+                  if ($field[$number] + $player === 0) {
+                    #石をひっくり返し、ひっくり返した場所の保存
+                    $field[$number] = $player;
+                    $number_array[] = $number;
+                    $number = $number + $octas;
+                    if ($number <= 0 || $number >= 65) {
+                      break;
+                    }
+                  } else {
+                    #一番端が自分の石ならひっくり返す(今までひっくり返してきた石を元に戻さない)
+                    if ($field[$number] === $player) {
+                      $field[$push] = $player;
+                      break;
+                    } else {
+                      #違ったときリセット
+                      $number_array[] = $number;
+                      foreach ($number_array as $value) {
+                        $field[$value] = $field_log[$value];
+                      }
+                      break;
+                    }
+                  }
+                }
+              }
+
+    }elseif($push === 8){
+      if ($number === 1){
+        if ($X === 7) {
+          if ($field[$number] + $player === 0) {
+            $field[$number] = $player;
+            $number_array[] = $number;
+
+            #一番端に自分と同じ石がなかった時、リセット
+
+            foreach ($number_array as $value) {
+              $field[$value] = $field_log[$value];
+            }
+            break;
+          } else {
+            if ($field[$number] === $player) {
+              #一番端が自分の石ならひっくり返す(今までひっくり返してきた石を元に戻さない)
+              $field[$push] = $player;
+              break;
+            } else {
+              #違った場合リセット。
+              $number_array[] = $number;
+              foreach ($number_array as $value) {
+                $field[$value] = $field_log[$value];
+              }
+              break;
+            }
+          }
+        } else {
+          if ($field[$number] === $player) {
+            #一番端が自分の石ならひっくり返す(今までひっくり返してきた石を元に戻さない)
+            $field[$push] = $player;
+            break;
+          } else {
+            #一番端が自分の石以外ならリセット
+            $number_array[] = $number;
+            foreach ($number_array as $value) {
+              $field[$value] = $field_log[$value];
+            }
+            break;
+          }
+        }
+      } else {
+        if ($X === 1) {
+          #探索する場所を決定し八方位探索する。
+          $number = $push + $octas;
+          if ($number <= 0 || $number >= 65 || $number === 9 ||$number === 17) {
+            break;
+          } else {
+            if ($field[$number] + $player === 0) {
+              #石をひっくり返し、ひっくり返した場所の保存
+              $field[$number] = $player;
+              $number_array = [$number];
+              $number = $number + $octas;
+              if ($number <= 0 || $number >= 65) {
+                break;
+              }
+            } else {
+              if ($field[$number] === $player) {
+                break;
+              } else {
+                #違ったときリセット
+                $number_array[] = $number;
+                foreach ($number_array as $value) {
+                  $field[$value] = $field_log[$value];
+                }
+                break;
+              }
+            }
+          }
+        } else {
+          #1以外の処理
+          if ($field[$number] + $player === 0) {
+            #石をひっくり返し、ひっくり返した場所の保存
+            $field[$number] = $player;
+            $number_array[] = $number;
+            $number = $number + $octas;
+            if ($number <= 0 || $number >= 65) {
+              break;
+            }
+          } else {
+            #一番端が自分の石ならひっくり返す(今までひっくり返してきた石を元に戻さない)
+            if ($field[$number] === $player) {
+              $field[$push] = $player;
+              break;
+            } else {
+              #違ったときリセット
+              $number_array[] = $number;
+              foreach ($number_array as $value) {
+                $field[$value] = $field_log[$value];
+              }
+              break;
+            }
+          }
+        }
+      }
+    }
+
+    elseif($push === 57){
+      if ($number === 56){
+        if ($X === 7) {
+          if ($field[$number] + $player === 0) {
+            $field[$number] = $player;
+            $number_array[] = $number;
+
+            #一番端に自分と同じ石がなかった時、リセット
+
+            foreach ($number_array as $value) {
+              $field[$value] = $field_log[$value];
+            }
+            break;
+          } else {
+            if ($field[$number] === $player) {
+              #一番端が自分の石ならひっくり返す(今までひっくり返してきた石を元に戻さない)
+              $field[$push] = $player;
+              break;
+            } else {
+              #違った場合リセット。
+              $number_array[] = $number;
+              foreach ($number_array as $value) {
+                $field[$value] = $field_log[$value];
+              }
+              break;
+            }
+          }
+        } else {
+          if ($field[$number] === $player) {
+            #一番端が自分の石ならひっくり返す(今までひっくり返してきた石を元に戻さない)
+            $field[$push] = $player;
+            break;
+          } else {
+            #一番端が自分の石以外ならリセット
+            $number_array[] = $number;
+            foreach ($number_array as $value) {
+              $field[$value] = $field_log[$value];
+            }
+            break;
+          }
+        }
+      } else {
+        if ($X === 1) {
+          #探索する場所を決定し八方位探索する。
+          $number = $push + $octas;
+          if ($number <= 0 || $number >= 65 || $number === 48 || $number === 64) {
+            break;
+          } else {
+            if ($field[$number] + $player === 0) {
+              #石をひっくり返し、ひっくり返した場所の保存
+              $field[$number] = $player;
+              $number_array = [$number];
+              $number = $number + $octas;
+              if ($number <= 0 || $number >= 65) {
+                break;
+              }
+            } else {
+              if ($field[$number] === $player) {
+                break;
+              } else {
+                #違ったときリセット
+                $number_array[] = $number;
+                foreach ($number_array as $value) {
+                  $field[$value] = $field_log[$value];
+                }
+                break;
+              }
+            }
+          }
+        } else {
+          #1以外の処理
+          if ($field[$number] + $player === 0) {
+            #石をひっくり返し、ひっくり返した場所の保存
+            $field[$number] = $player;
+            $number_array[] = $number;
+            $number = $number + $octas;
+            if ($number <= 0 || $number >= 65) {
+              break;
+            }
+          } else {
+            #一番端が自分の石ならひっくり返す(今までひっくり返してきた石を元に戻さない)
+            if ($field[$number] === $player) {
+              $field[$push] = $player;
+              break;
+            } else {
+              #違ったときリセット
+              $number_array[] = $number;
+              foreach ($number_array as $value) {
+                $field[$value] = $field_log[$value];
+              }
+              break;
+            }
+          }
+        }
+      }
+    }
+
+    elseif($push === 64){
+      if ($number === 57){
+        if ($X === 7) {
+          if ($field[$number] + $player === 0) {
+            $field[$number] = $player;
+            $number_array[] = $number;
+
+            #一番端に自分と同じ石がなかった時、リセット
+
+            foreach ($number_array as $value) {
+              $field[$value] = $field_log[$value];
+            }
+            break;
+          } else {
+            if ($field[$number] === $player) {
+              #一番端が自分の石ならひっくり返す(今までひっくり返してきた石を元に戻さない)
+              $field[$push] = $player;
+              break;
+            } else {
+              #違った場合リセット。
+              $number_array[] = $number;
+              foreach ($number_array as $value) {
+                $field[$value] = $field_log[$value];
+              }
+              break;
+            }
+          }
+        } else {
+          if ($field[$number] === $player) {
+            #一番端が自分の石ならひっくり返す(今までひっくり返してきた石を元に戻さない)
+            $field[$push] = $player;
+            break;
+          } else {
+            #一番端が自分の石以外ならリセット
+            $number_array[] = $number;
+            foreach ($number_array as $value) {
+              $field[$value] = $field_log[$value];
+            }
+            break;
+          }
+        }
+      } else {
+        if ($X === 1) {
+          #探索する場所を決定し八方位探索する。
+          $number = $push + $octas;
+          if ($number <= 0 || $number >= 65) {
+            break;
+          } else {
+            if ($field[$number] + $player === 0) {
+              #石をひっくり返し、ひっくり返した場所の保存
+              $field[$number] = $player;
+              $number_array = [$number];
+              $number = $number + $octas;
+              if ($number <= 0 || $number >= 65) {
+                break;
+              }
+            } else {
+              if ($field[$number] === $player) {
+                break;
+              } else {
+                #違ったときリセット
+                $number_array[] = $number;
+                foreach ($number_array as $value) {
+                  $field[$value] = $field_log[$value];
+                }
+                break;
+              }
+            }
+          }
+        } else {
+          #1以外の処理
+          if ($field[$number] + $player === 0) {
+            #石をひっくり返し、ひっくり返した場所の保存
+            $field[$number] = $player;
+            $number_array[] = $number;
+            $number = $number + $octas;
+            if ($number <= 0 || $number >= 65) {
+              break;
+            }
+          } else {
+            #一番端が自分の石ならひっくり返す(今までひっくり返してきた石を元に戻さない)
+            if ($field[$number] === $player) {
+              $field[$push] = $player;
+              break;
+            } else {
+              #違ったときリセット
+              $number_array[] = $number;
+              foreach ($number_array as $value) {
+                $field[$value] = $field_log[$value];
+              }
+              break;
+            }
+          }
+        }
+      }
+    }
+    elseif($push === 10 || $push === 11 || $push === 12 || $push === 13 || $push === 14 || $push === 15 || $push === 23 || $push === 31
+    || $push === 39 || $push === 47 || $push === 18 || $push === 26 || $push === 34 || $push === 42 || $push === 50 || $push === 51 || $push === 52 || $push === 53
+    || $push === 54 || $push === 55){
+      if ($number === 1 || $number === 2 || $number === 3 || $number === 4 || $number === 5 || $number === 6 || $number === 7 || $number === 8 || $number === 57 || $number === 58
+      || $number === 59 || $number === 61 || $number === 62 || $number === 63 || $number === 64 || $number === 9 || $number === 17 || $number === 25 || $number === 33 || $number === 41
+      || $number === 49 || $number === 16 || $number === 24 || $number === 32 || $number === 40 || $number === 48 || $number === 56 || $number === 57 || $number === 58 || $number === 59
+      || $number === 60 || $number === 61 || $number === 62 || $number === 63 || $number === 64 ||  $number <= 0 || $number >= 65){
+        if ($X === 6) {
+          if ($field[$number] + $player === 0) {
+            $field[$number] = $player;
+            $number_array[] = $number;
+
+            #一番端に自分と同じ石がなかった時、リセット
+
+            foreach ($number_array as $value) {
+              $field[$value] = $field_log[$value];
+            }
+            break;
+          } else {
+            if ($field[$number] === $player) {
+              #一番端が自分の石ならひっくり返す(今までひっくり返してきた石を元に戻さない)
+              $field[$push] = $player;
+              break;
+            } else {
+              #違った場合リセット。
+              $number_array[] = $number;
+              foreach ($number_array as $value) {
+                $field[$value] = $field_log[$value];
+              }
+              break;
+            }
+          }
+        } else {
+            break;
+        }
+      } else {
+        if ($X === 1) {
+          #探索する場所を決定し八方位探索する。
+          $number = $push + $octas;
+          if ($number <= 0 || $number >= 65) {
+            break;
+          } else {
+            if ($field[$number] + $player === 0) {
+              #石をひっくり返し、ひっくり返した場所の保存
+              $field[$number] = $player;
+              $number_array = [$number];
+              $number = $number + $octas;
+              if ($number <= 0 || $number >= 65) {
+                break;
+              }
+            } else {
+              if ($field[$number] === $player) {
+                break;
+              } else {
+                #違ったときリセット
+                $number_array[] = $number;
+                foreach ($number_array as $value) {
+                  $field[$value] = $field_log[$value];
+                }
+                break;
+              }
+            }
+          }
+        } else {
+          #1以外の処理
+          if ($field[$number] + $player === 0) {
+            #石をひっくり返し、ひっくり返した場所の保存
+            $field[$number] = $player;
+            $number_array[] = $number;
+            $number = $number + $octas;
+            if ($number <= 0 || $number >= 65) {
+              break;
+            }
+          } else {
+            #一番端が自分の石ならひっくり返す(今までひっくり返してきた石を元に戻さない)
+            if ($field[$number] === $player) {
+              $field[$push] = $player;
+              break;
+            } else {
+              #違ったときリセット
+              $number_array[] = $number;
+              foreach ($number_array as $value) {
+                $field[$value] = $field_log[$value];
+              }
+              break;
+            }
+          }
+        }
+      }
+    }
+
+    elseif($push === 2){
+      if ($number === 8 || $number === 57 || $number === 58
+      || $number === 59 || $number === 61 || $number === 62 || $number === 63 || $number === 64 || $number === 17 || $number === 25 || $number === 33 || $number === 41
+      || $number === 49 || $number === 16 || $number === 24 || $number === 32 || $number === 40 || $number === 48 || $number === 56 || $number === 57 || $number === 58 || $number === 59
+      || $number === 60 || $number === 61 || $number === 62 || $number === 63 || $number === 64 ||  $number <= 0 || $number >= 65){
+        if ($X === 7) {
+          if ($field[$number] + $player === 0) {
+            $field[$number] = $player;
+            $number_array[] = $number;
+
+            #一番端に自分と同じ石がなかった時、リセット
+
+            foreach ($number_array as $value) {
+              $field[$value] = $field_log[$value];
+            }
+            break;
+          } else {
+            if ($field[$number] === $player) {
+              #一番端が自分の石ならひっくり返す(今までひっくり返してきた石を元に戻さない)
+              $field[$push] = $player;
+              break;
+            } else {
+              #違った場合リセット。
+              $number_array[] = $number;
+              foreach ($number_array as $value) {
+                $field[$value] = $field_log[$value];
+              }
+              break;
+            }
+          }
+        } else {
+            break;
+        }
+      }
+      elseif($number === 1 || $number === 9){
+        break;
+      }
+      else {
+        if ($X === 1) {
+          #探索する場所を決定し八方位探索する。
+          $number = $push + $octas;
+          if ($number <= 0 || $number >= 65) {
+            break;
+          } else {
+            if ($field[$number] + $player === 0) {
+              #石をひっくり返し、ひっくり返した場所の保存
+              $field[$number] = $player;
+              $number_array = [$number];
+              $number = $number + $octas;
+              if ($number <= 0 || $number >= 65) {
+                break;
+              }
+            } else {
+              if ($field[$number] === $player) {
+                break;
+              } else {
+                #違ったときリセット
+                $number_array[] = $number;
+                foreach ($number_array as $value) {
+                  $field[$value] = $field_log[$value];
+                }
+                break;
+              }
+            }
+          }
+        } else {
+          #1以外の処理
+          if ($field[$number] + $player === 0) {
+            #石をひっくり返し、ひっくり返した場所の保存
+            $field[$number] = $player;
+            $number_array[] = $number;
+            $number = $number + $octas;
+            if ($number <= 0 || $number >= 65) {
+              break;
+            }
+          } else {
+            #一番端が自分の石ならひっくり返す(今までひっくり返してきた石を元に戻さない)
+            if ($field[$number] === $player) {
+              $field[$push] = $player;
+              break;
+            } else {
+              #違ったときリセット
+              $number_array[] = $number;
+              foreach ($number_array as $value) {
+                $field[$value] = $field_log[$value];
+              }
+              break;
+            }
+          }
+        }
+      }
+    }
+
+    elseif($push === 9){
+      if ($number === 3 || $number === 4 || $number === 5 || $number === 6 || $number === 7 || $number === 8 || $number === 57 || $number === 58
+      || $number === 59 || $number === 61 || $number === 62 || $number === 63 || $number === 64 || $number === 9
+      || $number === 16 || $number === 24 || $number === 32 || $number === 40 || $number === 48 || $number === 56 || $number === 57 || $number === 58 || $number === 59
+      || $number === 60 || $number === 61 || $number === 62 || $number === 63 || $number === 64 ||  $number <= 0 || $number >= 65){
+        if ($X === 7) {
+          if ($field[$number] + $player === 0) {
+            $field[$number] = $player;
+            $number_array[] = $number;
+
+            #一番端に自分と同じ石がなかった時、リセット
+
+            foreach ($number_array as $value) {
+              $field[$value] = $field_log[$value];
+            }
+            break;
+          } else {
+            if ($field[$number] === $player) {
+              #一番端が自分の石ならひっくり返す(今までひっくり返してきた石を元に戻さない)
+              $field[$push] = $player;
+              break;
+            } else {
+              #違った場合リセット。
+              $number_array[] = $number;
+              foreach ($number_array as $value) {
+                $field[$value] = $field_log[$value];
+              }
+              break;
+            }
+          }
+        } else {
+            break;
+        }
+      }
+      elseif($number === 1 || $number === 2){
+        break;
+      }
+      else {
+        if ($X === 1) {
+          #探索する場所を決定し八方位探索する。
+          $number = $push + $octas;
+          if ($number <= 0 || $number >= 65) {
+            break;
+          } else {
+            if ($field[$number] + $player === 0) {
+              #石をひっくり返し、ひっくり返した場所の保存
+              $field[$number] = $player;
+              $number_array = [$number];
+              $number = $number + $octas;
+              if ($number <= 0 || $number >= 65) {
+                break;
+              }
+            } else {
+              if ($field[$number] === $player) {
+                break;
+              } else {
+                #違ったときリセット
+                $number_array[] = $number;
+                foreach ($number_array as $value) {
+                  $field[$value] = $field_log[$value];
+                }
+                break;
+              }
+            }
+          }
+        } else {
+          #1以外の処理
+          if ($field[$number] + $player === 0) {
+            #石をひっくり返し、ひっくり返した場所の保存
+            $field[$number] = $player;
+            $number_array[] = $number;
+            $number = $number + $octas;
+            if ($number <= 0 || $number >= 65) {
+              break;
+            }
+          } else {
+            #一番端が自分の石ならひっくり返す(今までひっくり返してきた石を元に戻さない)
+            if ($field[$number] === $player) {
+              $field[$push] = $player;
+              break;
+            } else {
+              #違ったときリセット
+              $number_array[] = $number;
+              foreach ($number_array as $value) {
+                $field[$value] = $field_log[$value];
+              }
+              break;
+            }
+          }
+        }
+      }
+    }
+
+    elseif($push === 7){
+      if ($number === 1 || $number === 7 || $number === 57 || $number === 58
+      || $number === 59 || $number === 61 || $number === 62 || $number === 63 || $number === 64 || $number === 9 || $number === 17 || $number === 25 || $number === 33 || $number === 41
+      || $number === 49 || $number === 24 || $number === 32 || $number === 40 || $number === 48 || $number === 56 || $number === 57 || $number === 58 || $number === 59
+      || $number === 60 || $number === 61 || $number === 62 || $number === 63 || $number === 64 ||  $number <= 0 || $number >= 65){
+        if ($X === 7) {
+          if ($field[$number] + $player === 0) {
+            $field[$number] = $player;
+            $number_array[] = $number;
+
+            #一番端に自分と同じ石がなかった時、リセット
+
+            foreach ($number_array as $value) {
+              $field[$value] = $field_log[$value];
+            }
+            break;
+          } else {
+            if ($field[$number] === $player) {
+              #一番端が自分の石ならひっくり返す(今までひっくり返してきた石を元に戻さない)
+              $field[$push] = $player;
+              break;
+            } else {
+              #違った場合リセット。
+              $number_array[] = $number;
+              foreach ($number_array as $value) {
+                $field[$value] = $field_log[$value];
+              }
+              break;
+            }
+          }
+        } else {
+            break;
+        }
+      }
+      elseif($number === 8 || $number === 16){
+        break;
+      }
+      else {
+        if ($X === 1) {
+          #探索する場所を決定し八方位探索する。
+          $number = $push + $octas;
+          if ($number <= 0 || $number >= 65) {
+            break;
+          } else {
+            if ($field[$number] + $player === 0) {
+              #石をひっくり返し、ひっくり返した場所の保存
+              $field[$number] = $player;
+              $number_array = [$number];
+              $number = $number + $octas;
+              if ($number <= 0 || $number >= 65) {
+                break;
+              }
+            } else {
+              if ($field[$number] === $player) {
+                break;
+              } else {
+                #違ったときリセット
+                $number_array[] = $number;
+                foreach ($number_array as $value) {
+                  $field[$value] = $field_log[$value];
+                }
+                break;
+              }
+            }
+          }
+        } else {
+          #1以外の処理
+          if ($field[$number] + $player === 0) {
+            #石をひっくり返し、ひっくり返した場所の保存
+            $field[$number] = $player;
+            $number_array[] = $number;
+            $number = $number + $octas;
+            if ($number <= 0 || $number >= 65) {
+              break;
+            }
+          } else {
+            #一番端が自分の石ならひっくり返す(今までひっくり返してきた石を元に戻さない)
+            if ($field[$number] === $player) {
+              $field[$push] = $player;
+              break;
+            } else {
+              #違ったときリセット
+              $number_array[] = $number;
+              foreach ($number_array as $value) {
+                $field[$value] = $field_log[$value];
+              }
+              break;
+            }
+          }
+        }
+      }
+    }
+
+    elseif($push === 16){
+      if ($number === 1 || $number === 2 || $number === 3 || $number === 4 || $number === 5 || $number === 6 || $number === 57 || $number === 58
+      || $number === 59 || $number === 61 || $number === 62 || $number === 63 || $number === 64 || $number === 9 || $number === 17 || $number === 25 || $number === 33 || $number === 41
+      || $number === 49 || $number === 16 || $number === 24 || $number === 32 || $number === 40 || $number === 48 || $number === 56 || $number === 57 || $number === 58 || $number === 59
+      || $number === 60 || $number === 61 || $number === 62 || $number === 63 || $number === 64 ||  $number <= 0 || $number >= 65){
+        if ($X === 7) {
+          if ($field[$number] + $player === 0) {
+            $field[$number] = $player;
+            $number_array[] = $number;
+
+            #一番端に自分と同じ石がなかった時、リセット
+
+            foreach ($number_array as $value) {
+              $field[$value] = $field_log[$value];
+            }
+            break;
+          } else {
+            if ($field[$number] === $player) {
+              #一番端が自分の石ならひっくり返す(今までひっくり返してきた石を元に戻さない)
+              $field[$push] = $player;
+              break;
+            } else {
+              #違った場合リセット。
+              $number_array[] = $number;
+              foreach ($number_array as $value) {
+                $field[$value] = $field_log[$value];
+              }
+              break;
+            }
+          }
+        } else {
+            break;
+        }
+      }
+      elseif($number === 7 || $number === 8 ){
+        break;
+      }
+      else {
+        if ($X === 1) {
+          #探索する場所を決定し八方位探索する。
+          $number = $push + $octas;
+          if ($number <= 0 || $number >= 65) {
+            break;
+          } else {
+            if ($field[$number] + $player === 0) {
+              #石をひっくり返し、ひっくり返した場所の保存
+              $field[$number] = $player;
+              $number_array = [$number];
+              $number = $number + $octas;
+              if ($number <= 0 || $number >= 65) {
+                break;
+              }
+            } else {
+              if ($field[$number] === $player) {
+                break;
+              } else {
+                #違ったときリセット
+                $number_array[] = $number;
+                foreach ($number_array as $value) {
+                  $field[$value] = $field_log[$value];
+                }
+                break;
+              }
+            }
+          }
+        } else {
+          #1以外の処理
+          if ($field[$number] + $player === 0) {
+            #石をひっくり返し、ひっくり返した場所の保存
+            $field[$number] = $player;
+            $number_array[] = $number;
+            $number = $number + $octas;
+            if ($number <= 0 || $number >= 65) {
+              break;
+            }
+          } else {
+            #一番端が自分の石ならひっくり返す(今までひっくり返してきた石を元に戻さない)
+            if ($field[$number] === $player) {
+              $field[$push] = $player;
+              break;
+            } else {
+              #違ったときリセット
+              $number_array[] = $number;
+              foreach ($number_array as $value) {
+                $field[$value] = $field_log[$value];
+              }
+              break;
+            }
+          }
+        }
+      }
+    }
+
+    elseif($push === 49){
+      if ($number === 1 || $number === 2 || $number === 3 || $number === 4 || $number === 5 || $number === 6 || $number === 7 || $number === 8 || $number === 57 || $number === 58
+      || $number === 59 || $number === 61 || $number === 62 || $number === 63 || $number === 64 || $number === 9 || $number === 17 || $number === 25 || $number === 33 || $number === 41
+      || $number === 49 || $number === 16 || $number === 24 || $number === 32 || $number === 40 || $number === 48 || $number === 56 || $number === 59
+      || $number === 60 || $number === 61 || $number === 62 || $number === 63 || $number === 64 ||  $number <= 0 || $number >= 65){
+        if ($X === 7) {
+          if ($field[$number] + $player === 0) {
+            $field[$number] = $player;
+            $number_array[] = $number;
+
+            #一番端に自分と同じ石がなかった時、リセット
+
+            foreach ($number_array as $value) {
+              $field[$value] = $field_log[$value];
+            }
+            break;
+          } else {
+            if ($field[$number] === $player) {
+              #一番端が自分の石ならひっくり返す(今までひっくり返してきた石を元に戻さない)
+              $field[$push] = $player;
+              break;
+            } else {
+              #違った場合リセット。
+              $number_array[] = $number;
+              foreach ($number_array as $value) {
+                $field[$value] = $field_log[$value];
+              }
+              break;
+            }
+          }
+        } else {
+            break;
+        }
+      }
+      elseif($number === 57 || $number === 58){
+        break;
+      }
+      else {
+        if ($X === 1) {
+          #探索する場所を決定し八方位探索する。
+          $number = $push + $octas;
+          if ($number <= 0 || $number >= 65) {
+            break;
+          } else {
+            if ($field[$number] + $player === 0) {
+              #石をひっくり返し、ひっくり返した場所の保存
+              $field[$number] = $player;
+              $number_array = [$number];
+              $number = $number + $octas;
+              if ($number <= 0 || $number >= 65) {
+                break;
+              }
+            } else {
+              if ($field[$number] === $player) {
+                break;
+              } else {
+                #違ったときリセット
+                $number_array[] = $number;
+                foreach ($number_array as $value) {
+                  $field[$value] = $field_log[$value];
+                }
+                break;
+              }
+            }
+          }
+        } else {
+          #1以外の処理
+          if ($field[$number] + $player === 0) {
+            #石をひっくり返し、ひっくり返した場所の保存
+            $field[$number] = $player;
+            $number_array[] = $number;
+            $number = $number + $octas;
+            if ($number <= 0 || $number >= 65) {
+              break;
+            }
+          } else {
+            #一番端が自分の石ならひっくり返す(今までひっくり返してきた石を元に戻さない)
+            if ($field[$number] === $player) {
+              $field[$push] = $player;
+              break;
+            } else {
+              #違ったときリセット
+              $number_array[] = $number;
+              foreach ($number_array as $value) {
+                $field[$value] = $field_log[$value];
+              }
+              break;
+            }
+          }
+        }
+      }
+    }
+
+    elseif($push === 9){
+      if ($number === 1 || $number === 2 || $number === 3 || $number === 4 || $number === 5 || $number === 6 || $number === 7 || $number === 8 || $number === 57 || $number === 58
+      || $number === 59 || $number === 61 || $number === 62 || $number === 63 || $number === 64 || $number === 9 || $number === 17 || $number === 25 || $number === 33 || $number === 41
+      || $number === 49 || $number === 16 || $number === 24 || $number === 32 || $number === 40 || $number === 48 || $number === 56 || $number === 57 || $number === 58 || $number === 59
+      || $number === 60 || $number === 61 || $number === 62 || $number === 63 || $number === 64 ||  $number <= 0 || $number >= 65){
+        if ($X === 7) {
+          if ($field[$number] + $player === 0) {
+            $field[$number] = $player;
+            $number_array[] = $number;
+
+            #一番端に自分と同じ石がなかった時、リセット
+
+            foreach ($number_array as $value) {
+              $field[$value] = $field_log[$value];
+            }
+            break;
+          } else {
+            if ($field[$number] === $player) {
+              #一番端が自分の石ならひっくり返す(今までひっくり返してきた石を元に戻さない)
+              $field[$push] = $player;
+              break;
+            } else {
+              #違った場合リセット。
+              $number_array[] = $number;
+              foreach ($number_array as $value) {
+                $field[$value] = $field_log[$value];
+              }
+              break;
+            }
+          }
+        } else {
+            break;
+        }
+      }
+      elseif($number === 1 || $number === 9){
+        break;
+      }
+      else {
+        if ($X === 1) {
+          #探索する場所を決定し八方位探索する。
+          $number = $push + $octas;
+          if ($number <= 0 || $number >= 65) {
+            break;
+          } else {
+            if ($field[$number] + $player === 0) {
+              #石をひっくり返し、ひっくり返した場所の保存
+              $field[$number] = $player;
+              $number_array = [$number];
+              $number = $number + $octas;
+              if ($number <= 0 || $number >= 65) {
+                break;
+              }
+            } else {
+              if ($field[$number] === $player) {
+                break;
+              } else {
+                #違ったときリセット
+                $number_array[] = $number;
+                foreach ($number_array as $value) {
+                  $field[$value] = $field_log[$value];
+                }
+                break;
+              }
+            }
+          }
+        } else {
+          #1以外の処理
+          if ($field[$number] + $player === 0) {
+            #石をひっくり返し、ひっくり返した場所の保存
+            $field[$number] = $player;
+            $number_array[] = $number;
+            $number = $number + $octas;
+            if ($number <= 0 || $number >= 65) {
+              break;
+            }
+          } else {
+            #一番端が自分の石ならひっくり返す(今までひっくり返してきた石を元に戻さない)
+            if ($field[$number] === $player) {
+              $field[$push] = $player;
+              break;
+            } else {
+              #違ったときリセット
+              $number_array[] = $number;
+              foreach ($number_array as $value) {
+                $field[$value] = $field_log[$value];
+              }
+              break;
+            }
+          }
+        }
+      }
+    }
+
+    elseif($push === 9){
+      if ($number === 1 || $number === 2 || $number === 3 || $number === 4 || $number === 5 || $number === 6 || $number === 7 || $number === 8 || $number === 57 || $number === 58
+      || $number === 59 || $number === 61 || $number === 62 || $number === 63 || $number === 64 || $number === 9 || $number === 17 || $number === 25 || $number === 33 || $number === 41
+      || $number === 49 || $number === 16 || $number === 24 || $number === 32 || $number === 40 || $number === 48 || $number === 56 || $number === 57 || $number === 58 || $number === 59
+      || $number === 60 || $number === 61 || $number === 62 || $number === 63 || $number === 64 ||  $number <= 0 || $number >= 65){
+        if ($X === 7) {
+          if ($field[$number] + $player === 0) {
+            $field[$number] = $player;
+            $number_array[] = $number;
+
+            #一番端に自分と同じ石がなかった時、リセット
+
+            foreach ($number_array as $value) {
+              $field[$value] = $field_log[$value];
+            }
+            break;
+          } else {
+            if ($field[$number] === $player) {
+              #一番端が自分の石ならひっくり返す(今までひっくり返してきた石を元に戻さない)
+              $field[$push] = $player;
+              break;
+            } else {
+              #違った場合リセット。
+              $number_array[] = $number;
+              foreach ($number_array as $value) {
+                $field[$value] = $field_log[$value];
+              }
+              break;
+            }
+          }
+        } else {
+            break;
+        }
+      }
+      elseif($number === 1 || $number === 9){
+        break;
+      }
+      else {
+        if ($X === 1) {
+          #探索する場所を決定し八方位探索する。
+          $number = $push + $octas;
+          if ($number <= 0 || $number >= 65) {
+            break;
+          } else {
+            if ($field[$number] + $player === 0) {
+              #石をひっくり返し、ひっくり返した場所の保存
+              $field[$number] = $player;
+              $number_array = [$number];
+              $number = $number + $octas;
+              if ($number <= 0 || $number >= 65) {
+                break;
+              }
+            } else {
+              if ($field[$number] === $player) {
+                break;
+              } else {
+                #違ったときリセット
+                $number_array[] = $number;
+                foreach ($number_array as $value) {
+                  $field[$value] = $field_log[$value];
+                }
+                break;
+              }
+            }
+          }
+        } else {
+          #1以外の処理
+          if ($field[$number] + $player === 0) {
+            #石をひっくり返し、ひっくり返した場所の保存
+            $field[$number] = $player;
+            $number_array[] = $number;
+            $number = $number + $octas;
+            if ($number <= 0 || $number >= 65) {
+              break;
+            }
+          } else {
+            #一番端が自分の石ならひっくり返す(今までひっくり返してきた石を元に戻さない)
+            if ($field[$number] === $player) {
+              $field[$push] = $player;
+              break;
+            } else {
+              #違ったときリセット
+              $number_array[] = $number;
+              foreach ($number_array as $value) {
+                $field[$value] = $field_log[$value];
+              }
+              break;
+            }
+          }
+        }
+      }
+    }
+
+    elseif($push === 9){
+      if ($number === 1 || $number === 2 || $number === 3 || $number === 4 || $number === 5 || $number === 6 || $number === 7 || $number === 8 || $number === 57 || $number === 58
+      || $number === 59 || $number === 61 || $number === 62 || $number === 63 || $number === 64 || $number === 9 || $number === 17 || $number === 25 || $number === 33 || $number === 41
+      || $number === 49 || $number === 16 || $number === 24 || $number === 32 || $number === 40 || $number === 48 || $number === 56 || $number === 57 || $number === 58 || $number === 59
+      || $number === 60 || $number === 61 || $number === 62 || $number === 63 || $number === 64 ||  $number <= 0 || $number >= 65){
+        if ($X === 7) {
+          if ($field[$number] + $player === 0) {
+            $field[$number] = $player;
+            $number_array[] = $number;
+
+            #一番端に自分と同じ石がなかった時、リセット
+
+            foreach ($number_array as $value) {
+              $field[$value] = $field_log[$value];
+            }
+            break;
+          } else {
+            if ($field[$number] === $player) {
+              #一番端が自分の石ならひっくり返す(今までひっくり返してきた石を元に戻さない)
+              $field[$push] = $player;
+              break;
+            } else {
+              #違った場合リセット。
+              $number_array[] = $number;
+              foreach ($number_array as $value) {
+                $field[$value] = $field_log[$value];
+              }
+              break;
+            }
+          }
+        } else {
+            break;
+        }
+      }
+      elseif($number === 1 || $number === 9){
+        break;
+      }
+      else {
+        if ($X === 1) {
+          #探索する場所を決定し八方位探索する。
+          $number = $push + $octas;
+          if ($number <= 0 || $number >= 65) {
+            break;
+          } else {
+            if ($field[$number] + $player === 0) {
+              #石をひっくり返し、ひっくり返した場所の保存
+              $field[$number] = $player;
+              $number_array = [$number];
+              $number = $number + $octas;
+              if ($number <= 0 || $number >= 65) {
+                break;
+              }
+            } else {
+              if ($field[$number] === $player) {
+                break;
+              } else {
+                #違ったときリセット
+                $number_array[] = $number;
+                foreach ($number_array as $value) {
+                  $field[$value] = $field_log[$value];
+                }
+                break;
+              }
+            }
+          }
+        } else {
+          #1以外の処理
+          if ($field[$number] + $player === 0) {
+            #石をひっくり返し、ひっくり返した場所の保存
+            $field[$number] = $player;
+            $number_array[] = $number;
+            $number = $number + $octas;
+            if ($number <= 0 || $number >= 65) {
+              break;
+            }
+          } else {
+            #一番端が自分の石ならひっくり返す(今までひっくり返してきた石を元に戻さない)
+            if ($field[$number] === $player) {
+              $field[$push] = $player;
+              break;
+            } else {
+              #違ったときリセット
+              $number_array[] = $number;
+              foreach ($number_array as $value) {
+                $field[$value] = $field_log[$value];
+              }
+              break;
+            }
+          }
+        }
+      }
+    }
+
+
+    else{
+
+            if (
+              $number === 1 || $number === 2 || $number === 3 || $number === 4 || $number === 5 || $number === 6 || $number === 7 || $number === 8 || $number === 57 || $number === 58
+              || $number === 59 || $number === 61 || $number === 62 || $number === 63 || $number === 64 || $number === 9 || $number === 17 || $number === 25 || $number === 33 || $number === 41
+              || $number === 49 || $number === 16 || $number === 24 || $number === 32 || $number === 40 || $number === 48 || $number === 56 || $number === 57 || $number === 58 || $number === 59
+              || $number === 60 || $number === 61 || $number === 62 || $number === 63 || $number === 64 ||  $number <= 0 || $number >= 65) {
+              if ($X === 7) {
+                if ($field[$number] + $player === 0) {
+                  $field[$number] = $player;
+                  $number_array[] = $number;
+
+                  #一番端に自分と同じ石がなかった時、リセット
+
+                  foreach ($number_array as $value) {
+                    $field[$value] = $field_log[$value];
+                  }
+                  break;
+                } else {
+                  if ($field[$number] === $player) {
+                    #一番端が自分の石ならひっくり返す(今までひっくり返してきた石を元に戻さない)
+                    $field[$push] = $player;
+                    break;
+                  } else {
+                    #違った場合リセット。
+                    $number_array[] = $number;
+                    foreach ($number_array as $value) {
+                      $field[$value] = $field_log[$value];
+                    }
+                    break;
+                  }
+                }
+              } else {
+                if ($field[$number] === $player) {
+                  #一番端が自分の石ならひっくり返す(今までひっくり返してきた石を元に戻さない)
+                  $field[$push] = $player;
+                  break;
+                } else {
+                  #一番端が自分の石以外ならリセット
+                  $number_array[] = $number;
+                  foreach ($number_array as $value) {
+                    $field[$value] = $field_log[$value];
+                  }
+                  break;
+                }
+              }
+            } else {
+              if ($X === 1) {
+                #探索する場所を決定し八方位探索する。
+                $number = $push + $octas;
+                if ($number <= 0 || $number >= 65) {
+                  break;
+                } else {
+                  if ($field[$number] + $player === 0) {
+                    #石をひっくり返し、ひっくり返した場所の保存
+                    $field[$number] = $player;
+                    $number_array = [$number];
+                    $number = $number + $octas;
+                    if ($number <= 0 || $number >= 65) {
+                      break;
+                    }
+                  } else {
+                    if ($field[$number] === $player) {
+                      break;
+                    } else {
+                      #違ったときリセット
+                      $number_array[] = $number;
+                      foreach ($number_array as $value) {
+                        $field[$value] = $field_log[$value];
+                      }
+                      break;
+                    }
+                  }
+                }
+              } else {
+                #1以外の処理
+                if ($field[$number] + $player === 0) {
+                  #石をひっくり返し、ひっくり返した場所の保存
+                  $field[$number] = $player;
+                  $number_array[] = $number;
+                  $number = $number + $octas;
+                  if ($number <= 0 || $number >= 65) {
+                    break;
+                  }
+                } else {
+                  #一番端が自分の石ならひっくり返す(今までひっくり返してきた石を元に戻さない)
+                  if ($field[$number] === $player) {
+                    $field[$push] = $player;
+                    break;
+                  } else {
+                    #違ったときリセット
+                    $number_array[] = $number;
+                    foreach ($number_array as $value) {
+                      $field[$value] = $field_log[$value];
+                    }
+                    break;
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+      }
+    }
+
+
+    if ($field_check === $field) {
+      $turn = $turn - 1;
+    }
+
+    $field_check = $field;
+  } else {
+    $W_result = array_keys($field, 1);
+    $B_result = array_keys($field, -1);
+
+    if (count($W_result) > count($B_result)) {
+      print("player_W Win !");
+    } elseif (count($W_result) < count($B_result)) {
+      print("player_B Win !");
+    } else {
+      print("you are draw !");
+    }
+    break;
+  }
+}
+
+
+
+
+// デバックするときに、注目する必要がある点。
