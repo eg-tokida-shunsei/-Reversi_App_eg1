@@ -1,8 +1,5 @@
 <?php
 
-//関数うんぬんの前にやはり、フィールド内で、止める処理をしてることが問題
-//面倒ではあるが、止める処理以外はパクリで、二次元配列に直した方が楽なのではないか。
-
 print("  |GAME START|  \n  -Enterを押してください-  \n");
 echo fgets(STDIN);
 print("1番目のプレイヤー。あなたはplayer_Wです\n-Enterを押してください-\n");
@@ -30,7 +27,6 @@ $player_B = -1;
 $field_check = $field;
 
 
-
 #石表示プログラム
 
 function reversi_view($field)
@@ -43,7 +39,7 @@ function reversi_view($field)
 
   $field_view = str_replace("-1", "○", $field);
   $field_view = str_replace("1", "●", $field_view);
-  $field_view = str_replace("0", "□", $field_view);
+  $field_view = str_replace("0", " ", $field_view);
 
   echo " " . "|" . "1" . "|" . "2" . "|" . "3" . "|" . "4" . "|" . "5" . "|" . "6" . "|" . "7" . "|" . "8" . "|" . " " . "\n";
   echo "1" . "|" . $field_view[0] . "|" . $field_view[1] . "|" . $field_view[2] . "|" . $field_view[3] . "|" . $field_view[4] . "|" . $field_view[5] . "|" . $field_view[6] . "|" . $field_view[7] . "|" . "1" . "\n";
@@ -91,6 +87,10 @@ for ($turn = 1; $turn < 1000; $turn++) {
     print("縦列：");
     $row_f = fgets(STDIN);
     $row = intval($row_f);
+
+    if($col > 8 || $col < 0 || $row > 8 || $row < 0){
+      $turn = $turn;
+    }else{
 
     if ($col === 0 || $row === 0) {
       $turn = $turn + 1;
@@ -177,6 +177,9 @@ for ($turn = 1; $turn < 1000; $turn++) {
                     $number_c = $number_c + $octas[0];
                     $number_r = $number_r + $octas[1];
                     if ($number_c < 1 || $number_c > 8 || $number_r < 0 || $number_r > 8) {
+                      foreach ($number_array_c as $key => $value) {
+                        $field[$number_array_c[$key]][$number_array_r[$key]] = $field_log[$number_array_c[$key]][$number_array_r[$key]];
+                      }
                       break;
                     }
                   } else {
@@ -203,6 +206,9 @@ for ($turn = 1; $turn < 1000; $turn++) {
                   $number_c = $number_c + $octas[0];
                   $number_r = $number_r + $octas[1];
                   if ($number_c < 1 || $number_c > 8 || $number_r < 0 || $number_r > 8) {
+                    foreach ($number_array_c as $key => $value) {
+                      $field[$number_array_c[$key]][$number_array_r[$key]] = $field_log[$number_array_c[$key]][$number_array_r[$key]];
+                    }
                     break;
                   }
                 } else {
@@ -226,8 +232,7 @@ for ($turn = 1; $turn < 1000; $turn++) {
         }
       }
     }
-
-    //
+  }
 
     if ($field_check === $field) {
       $turn = $turn - 1;
