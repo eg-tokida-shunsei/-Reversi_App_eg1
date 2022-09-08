@@ -50,6 +50,8 @@ for ($x = 1; $x < 9; $x++) {
 // {
 // }
 
+// reversi_viewは、ゲームを動かすプログラム。
+
 #石表示プログラム
 
 function reversi_view($field)
@@ -112,9 +114,12 @@ for ($turn = 1; $turn < 150; $turn++) {
       $push = $replace[$row][$col];
 
       // var_dump($push);
+      //8方位探す、この辺りを関数化したい。
 
       #置いた石を8方位を探してひっくり返す作業
       $octas_array = [-9, -8, -7, -1, 1, 7, 8, 9];
+
+      //石の上に置けない処理
 
       if ($field[$push] === $player_W || $field[$push] === $player_B) {
       } else {

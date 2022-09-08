@@ -1,0 +1,190 @@
+<?php
+#石をひっくり返すプログラム作成
+#ひっくり返すことは確認済み、後はリセットの処理周り
+
+#初期値設定 二次元配列にする場合の変更点　置換処理もいらない。
+for ($x = 1; $x < 9; $x++) {
+  for ($y = 1; $y < 9; $y++) {
+    $field[$x][$y] = 0;
+  }
+}
+$field[4][4] = $field[5][5] = -1;
+$field[4][5] = $field[5][4] = -1;
+$field[6][5] = $field[7][5] = -1;
+$player_W = 1;
+$player_B = -1;
+$field_check = $field;
+
+
+
+#print_r($field);
+#$push
+$col = 8;
+$row = 5;
+#白石
+$player = 1;
+$number_c = $col;
+$number_r = $row;
+
+#フィールド情報を保持しておく。
+$field_log = $field;
+#print($field[$number + 1 * $X]);
+
+// echo $field[4][4];
+// echo $field[4][5];
+// echo $field[4][6];
+echo $field[1][5];
+echo $field[2][5];
+echo $field[3][5];
+echo $field[4][5];
+echo $field[5][5];
+echo $field[6][5];
+echo $field[7][5];
+echo $field[8][5] . "\n\n";
+
+// for($Y = 38;  $Y <= 41; $Y++){
+//   echo $field[$Y] . "\n";
+// }
+
+#
+
+#$check = [];
+#24行目が型の違いで怒られるけど、上記の方法で調べると、全部int型なんだけどな……
+for ($X = 1; $X < 8; $X++) {
+
+  if ($number_c < 1 || $number_c > 8 || $number_r < 0 || $number_r > 8) {
+    if ($X === 7) {
+      if ($field[$number_c][$number_r] + $player === 0) {
+        $field[$number_c][$number_r] = $player;
+        $number_array_c[] = $number_c;
+        $number_array_r[] = $number_r;
+
+        #一番端に自分と同じ石がなかった時、リセット
+
+        foreach ($number_array_c as $key => $value) {
+
+          $field[$number_array_c[$key]][$number_array_r[$key]] = $field_log[$number_array_c[$key]][$number_array_r[$key]];
+        }
+        break;
+      } else {
+        if ($field[$number_c][$number_r] === $player) {
+          #一番端が自分の石ならひっくり返す(今までひっくり返してきた石を元に戻さない)
+          $field[$col][$row] = $player;
+          break;
+        } else {
+          #違った場合リセット。
+          $number_array_c[] = $number_c;
+          $number_array_r[] = $number_r;
+          foreach ($number_array_c as $value) {
+            $field[$number_array_c[$key]][$number_array_r[$key]] = $field_log[$number_array_c[$key]][$number_array_r[$key]];
+          }
+          break;
+        }
+      }
+    } else {
+      if ($field[$number_c][$number_r] === $player) {
+        #一番端が自分の石ならひっくり返す(今までひっくり返してきた石を元に戻さない)
+        $field[$col][$row] = $player;
+        break;
+      } else {
+        #一番端が自分の石以外ならリセット
+        $number_array_c[] = $number_c;
+        $number_array_r[] = $number_r;
+        foreach ($number_array_c as $value) {
+          $field[$number_array_c[$key]][$number_array_r[$key]] = $field_log[$number_array_c[$key]][$number_array_r[$key]];
+        }
+        break;
+      }
+    }
+  } else {
+    if ($X === 1) {
+      #探索する場所を決定し八方位探索する。
+      $number_c = $number_c - 1;
+      $number_r = $number_r + 0;
+      if ($number_c < 1 || $number_c > 8 || $number_r < 1 || $number_r > 8) {
+        break;
+      } else {
+        if ($field[$number_c][$number_r] + $player === 0) {
+          #石をひっくり返し、ひっくり返した場所の保存
+          $field[$number_c][$number_r] = $player;
+          $number_array_c = [$number_c];
+          $number_array_r = [$number_r];
+          $number_c = $number_c - 1;
+          $number_r = $number_r + 0;
+          if ($number_c < 1 || $number_c > 8 || $number_r < 0 || $number_r > 8) {
+            break;
+          }
+        } else {
+          if ($field[$number_c][$number_r] === $player) {
+            break;
+          } else {
+            #違ったときリセット
+            $number_array_c[] = $number_c;
+            $number_array_r[] = $number_r;
+            foreach ($number_array_c as $key => $value) {
+              $field[$number_array_c[$key]][$number_array_r[$key]] = $field_log[$number_array_c[$key]][$number_array_r[$key]];
+            }
+            break;
+          }
+        }
+      }
+    } else {
+      #1以外の処理
+      if ($field[$number_c][$number_r] + $player === 0) {
+        #石をひっくり返し、ひっくり返した場所の保存
+        $field[$number_c][$number_r] = $player;
+        $number_array_c[] = $number_c;
+        $number_array_r[] = $number_r;
+        $number_c = $number_c - 1;
+        $number_r = $number_r + 0;
+        if ($number_c < 1 || $number_c > 8 || $number_r < 0 || $number_r > 8) {
+          break;
+        }
+      } else {
+        #一番端が自分の石ならひっくり返す(今までひっくり返してきた石を元に戻さない)
+        if ($field[$number_c][$number_r] === $player) {
+          $field[$col][$row] = $player;
+          break;
+        } else {
+          #違ったときリセット  forを使えばペアで撮ってこれる。今回は長さも同じなので。戻す処理、
+          $number_array_c[] = $number_c;
+          $number_array_r[] = $number_r;
+          foreach ($number_array_c as $key => $value) {
+            $field[$number_array_c[$key]][$number_array_r[$key]] = $field_log[$number_array_c[$key]][$number_array_r[$key]];
+          }
+          break;
+        }
+      }
+    }
+  }
+}
+
+
+  #echo $field[$number + 1 * $X]+$player;
+
+
+
+
+echo "\n\n";
+// echo $field[4][4];
+// echo $field[4][5];
+// echo $field[4][6];
+echo $field[1][5];
+echo $field[2][5];
+echo $field[3][5];
+echo $field[4][5];
+echo $field[5][5];
+echo $field[6][5];
+echo $field[7][5];
+echo $field[8][5];
+
+// echo $field[40];
+
+// for($Y = 38;  $Y <= 41; $Y++){
+//   echo $field[$Y] . "\n";
+// }
+
+
+
+
+// 二次元配列に直してからの石をひっくり返す処理
