@@ -31,8 +31,13 @@ for ($x = 1; $x < 9; $x++) {
 //エラーパターン2
 // $field[2][1] = $field[6][1] = $field[6][2] = $field[7][3] = $field[5][3] = $field[8][4] = $field[7][2] = -1;
 // $field[3][1] = $field[4][1] = $field[5][2] = $field[3][2] = $field[4][2] = $field[3][3] = $field[4][3] = $field[6][3] = $field[8][3] = $field[8][2] = 1;
-$field[4][4] = $field[5][5] = -1;
-$field[4][5] = $field[5][4] = 1;
+
+//エラーパターン3
+$field[1][3] = $field[2][3] = $field[3][1] = $field[3][2] = $field[3][3] = $field[3][5] = $field[4][3] = $field[4][6] = $field[5][3] = $field[5][4] = $field[5][5] = $field[5][6] = $field[5][7] = $field[6][6] =  -1;
+$field[3][4] = $field[4][4] = $field[4][5] = $field[6][5] = $field[7][5] = $field[8][5] = 1;
+
+// $field[4][4] = $field[5][5] = -1;
+// $field[4][5] = $field[5][4] = 1;
 $player_W = 1;
 $player_B = -1;
 $field_check = $field;
@@ -79,7 +84,7 @@ for ($turn = 1; $turn < 1000; $turn++) {
 
   if (in_array(0, array_column($field, 1)) ||
   in_array(0, array_column($field, 2)) ||
-  in_array(0, array_column($field, 3)) || 
+  in_array(0, array_column($field, 3)) ||
   in_array(0, array_column($field, 4)) ||
   in_array(0, array_column($field, 5)) ||
   in_array(0, array_column($field, 6)) ||
@@ -129,7 +134,7 @@ for ($turn = 1; $turn < 1000; $turn++) {
           $number_r = $row;
           for ($X = 1; $X < 8; $X++) {
 
-            if ($number_c < 1 || $number_c > 8 || $number_r < 0 || $number_r > 8) {
+            if ($number_c < 1 || $number_c > 8 || $number_r < 1 || $number_r > 8) {
               if ($X === 7) {
                 if ($field[$number_c][$number_r] + $player === 0) {
                   $field[$number_c][$number_r] = $player;
@@ -175,9 +180,37 @@ for ($turn = 1; $turn < 1000; $turn++) {
               }
             } else {
               if ($X === 1) {
+                // echo "X === 1";
+                // echo "\n";
+                // var_dump($number_c);
+                // echo "\n";
+                // echo "●";
+                // echo "\n";
+                // var_dump($number_r);
+                // echo "\n";
+                // echo "●";
+                // echo "\n";
+                // var_dump($field[$number_c][$number_r]);
+                // echo "\n";
+                // echo "●●";
+                // echo "\n";
                 #探索する場所を決定し八方位探索する。
                 $number_c = $number_c + $octas[0];
                 $number_r = $number_r + $octas[1];
+                // echo "X === 1(二個目)";
+                // echo "\n";
+                // var_dump($number_c);
+                // echo "\n";
+                // echo "△";
+                // echo "\n";
+                // var_dump($number_r);
+                // echo "\n";
+                // echo "△";
+                // echo "\n";
+                // var_dump($field[$number_c][$number_r]);
+                // echo "\n";
+                // echo "△△";
+                // echo "\n";
                 if ($number_c < 1 || $number_c > 8 || $number_r < 1 || $number_r > 8) {
                   break;
                 } else {
@@ -188,7 +221,20 @@ for ($turn = 1; $turn < 1000; $turn++) {
                     $number_array_r = [$number_r];
                     $number_c = $number_c + $octas[0];
                     $number_r = $number_r + $octas[1];
-                    if ($number_c < 1 || $number_c > 8 || $number_r < 0 || $number_r > 8) {
+                // echo "X === 1(三個目)";
+                // echo "\n";
+                // var_dump($number_c);
+                // echo "\n";
+                // echo "■";
+                // echo "\n";
+                // var_dump($number_r);
+                // echo "\n";
+                // echo "■";
+                // echo "\n";
+                // var_dump($field[$number_c][$number_r]);
+                // echo "\n";
+                // echo "■■";
+                    if ($number_c < 1 || $number_c > 8 || $number_r < 1 || $number_r > 8) {
                       foreach ($number_array_c as $key => $value) {
                         $field[$number_array_c[$key]][$number_array_r[$key]] = $field_log[$number_array_c[$key]][$number_array_r[$key]];
                       }
@@ -210,6 +256,20 @@ for ($turn = 1; $turn < 1000; $turn++) {
                 }
               } else {
                 #1以外の処理
+                // echo "別";
+                // echo "\n";
+                // var_dump($number_c);
+                // echo "\n";
+                // echo "◆";
+                // echo "\n";
+                // var_dump($number_r);
+                // echo "\n";
+                // echo "◆";
+                // echo "\n";
+                // var_dump($field[$number_c][$number_r]);
+                // echo "\n";
+                // echo "◆◆";
+                // echo "\n";
                 if ($field[$number_c][$number_r] + $player === 0) {
                   #石をひっくり返し、ひっくり返した場所の保存
                   $field[$number_c][$number_r] = $player;
@@ -217,18 +277,59 @@ for ($turn = 1; $turn < 1000; $turn++) {
                   $number_array_r[] = $number_r;
                   $number_c = $number_c + $octas[0];
                   $number_r = $number_r + $octas[1];
-                  if ($number_c < 1 || $number_c > 8 || $number_r < 0 || $number_r > 8) {
+                // echo "別(2回目)";
+                // echo "\n";
+                // var_dump($number_c);
+                // echo "\n";
+                // echo "◎";
+                // echo "\n";
+                // var_dump($number_r);
+                // echo "\n";
+                // echo "◎";
+                // echo "\n";
+                // var_dump($field[$number_c][$number_r]);
+                // echo "\n";
+                // echo "◎◎";
+                // echo "\n";
+                  if ($number_c < 1 || $number_c > 8 || $number_r < 1 || $number_r > 8) {
                     foreach ($number_array_c as $key => $value) {
                       $field[$number_array_c[$key]][$number_array_r[$key]] = $field_log[$number_array_c[$key]][$number_array_r[$key]];
                     }
                     break;
                   }
                 } else {
+                // echo "終了処理";
+                // echo "\n";
+                // var_dump($number_c);
+                // echo "\n";
+                // echo "▼";
+                // echo "\n";
+                // var_dump($number_r);
+                // echo "\n";
+                // echo "▼";
+                // echo "\n";
+                // var_dump($field[$number_c][$number_r]);
+                // echo "\n";
+                // echo "▼▼";
+                // echo "\n";
                   #一番端が自分の石ならひっくり返す(今までひっくり返してきた石を元に戻さない)
                   if ($field[$number_c][$number_r] === $player) {
                     $field[$col][$row] = $player;
                     break;
                   } else {
+                // echo "終了処理(ひっくり返せないパターン)";
+                // echo "\n";
+                // var_dump($number_c);
+                // echo "\n";
+                // echo "×";
+                // echo "\n";
+                // var_dump($number_r);
+                // echo "\n";
+                // echo "×";
+                // echo "\n";
+                // var_dump($field[$number_c][$number_r]);
+                // echo "\n";
+                // echo "××";
                     #違ったときリセット  forを使えばペアで撮ってこれる。今回は長さも同じなので。戻す処理、
                     $number_array_c[] = $number_c;
                     $number_array_r[] = $number_r;

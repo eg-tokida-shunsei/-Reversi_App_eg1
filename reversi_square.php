@@ -1,14 +1,13 @@
 <?php
 
-print("  |GAME START|  \n  -Enterを押してください-  \n");
+print("  |GAME START|  \n  いずれかのキーを押してください-  \n");
 echo fgets(STDIN);
-print("1番目のプレイヤー。あなたはplayer_Wです\n-Enterを押してください-\n");
+print("1番目のプレイヤー。あなたはplayer_Wです\nいずれかのキーを押してください-\n");
 echo fgets(STDIN);
-print("2番目のプレイヤー。あなたはplayer_Bです\n-Enterを押してください-\n");
+print("2番目のプレイヤー。あなたはplayer_Bです\nいずれかのキーを押してください-\n");
 echo fgets(STDIN);
-print("ゲームを開始します。準備はよろしいですか\n[y/n]?\n");
-echo fgets(STDIN);
-print("準備に関係なく、ゲームを開始します\n\n");
+print("ゲームを開始します\n");
+//余裕あったらnoしたときにゲームやめる処理
 
 #ゲーム
 
@@ -67,7 +66,7 @@ for ($turn = 1; $turn < 1000; $turn++) {
 
   if (in_array(0, array_column($field, 1)) ||
   in_array(0, array_column($field, 2)) ||
-  in_array(0, array_column($field, 3)) || 
+  in_array(0, array_column($field, 3)) ||
   in_array(0, array_column($field, 4)) ||
   in_array(0, array_column($field, 5)) ||
   in_array(0, array_column($field, 6)) ||
@@ -77,7 +76,7 @@ for ($turn = 1; $turn < 1000; $turn++) {
 
     reversi_view($field);
     echo "\n" . $player_name . "\n";
-    print("あなたのターンです\n置きたい場所の縦列の番号と横列の番号を入力してください\n\n※石をひっくり返せない場所に置くともう一度選択する必要が出てきます。パスをする場合、縦列で0か横列で0を入力してください\n");
+    print("あなたのターンです\n置きたい場所の縦列の番号と横列の番号を入力してください\n\n※　石をひっくり返せない場所に置くともう一度選択する必要が出てきます。\n※　パスをする場合、縦列、横列のいずれかで0または文字を入力してください\n");
 
     //数字だけしかないように入力制限をする。パス機能を付ける
     print("横列：");
@@ -117,7 +116,7 @@ for ($turn = 1; $turn < 1000; $turn++) {
           $number_r = $row;
           for ($X = 1; $X < 8; $X++) {
 
-            if ($number_c < 1 || $number_c > 8 || $number_r < 0 || $number_r > 8) {
+            if ($number_c < 1 || $number_c > 8 || $number_r < 1 || $number_r > 8) {
               if ($X === 7) {
                 if ($field[$number_c][$number_r] + $player === 0) {
                   $field[$number_c][$number_r] = $player;
@@ -176,7 +175,7 @@ for ($turn = 1; $turn < 1000; $turn++) {
                     $number_array_r = [$number_r];
                     $number_c = $number_c + $octas[0];
                     $number_r = $number_r + $octas[1];
-                    if ($number_c < 1 || $number_c > 8 || $number_r < 0 || $number_r > 8) {
+                    if ($number_c < 1 || $number_c > 8 || $number_r < 1 || $number_r > 8) {
                       foreach ($number_array_c as $key => $value) {
                         $field[$number_array_c[$key]][$number_array_r[$key]] = $field_log[$number_array_c[$key]][$number_array_r[$key]];
                       }
@@ -205,7 +204,7 @@ for ($turn = 1; $turn < 1000; $turn++) {
                   $number_array_r[] = $number_r;
                   $number_c = $number_c + $octas[0];
                   $number_r = $number_r + $octas[1];
-                  if ($number_c < 1 || $number_c > 8 || $number_r < 0 || $number_r > 8) {
+                  if ($number_c < 1 || $number_c > 8 || $number_r < 1 || $number_r > 8) {
                     foreach ($number_array_c as $key => $value) {
                       $field[$number_array_c[$key]][$number_array_r[$key]] = $field_log[$number_array_c[$key]][$number_array_r[$key]];
                     }
@@ -240,8 +239,14 @@ for ($turn = 1; $turn < 1000; $turn++) {
 
     $field_check = $field;
   } else {
+    reversi_view($field);
     $W_result = array_keys($field, 1);
     $B_result = array_keys($field, -1);
+    echo "\n";
+    print("player_W_result:".$W_result);
+    echo "\n";
+    print("player_B_result:".$B_result);
+    echo "\n";
 
     if (count($W_result) > count($B_result)) {
       print("player_W Win !");
